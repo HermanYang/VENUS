@@ -1,0 +1,5 @@
+#vim swp file
+*.swp
+
+#kubuntu directory infomation
+.directory
