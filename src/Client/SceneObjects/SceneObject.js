@@ -1,0 +1,2 @@
+VENUS.SceneObject = function(){
+}
