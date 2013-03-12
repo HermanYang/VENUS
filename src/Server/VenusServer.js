@@ -1,101 +1,84 @@
-var fs = require('fs');
-var log = require('./Logger.js');
-var url = require('url');
+var Log = require('./Logger.js');
+var Player = require('./Player.js');
+
+var app = undefined
+var io = undefined;
 var port = 8080;
 
-var clientdir = '../Client';
-var resdir = '../../res/';
+var listeners = {};
+var players = {};
+var timers = {};
 
-var Server = function() {
-	this.app = require('http').createServer(this._onHttpRequest);
-	this.io = require('socket.io').listen(this.app);
-	this.io.set('log level', 1);
+// param onHttprequest: function(resquest, response)
+function start(onHttpRequest) {
+	app = require('http').createServer(onHttpRequest);
+	io = require('socket.io').listen(app);
+	io.sockets.on('connection', _onSocketsConnection);
+	io.set('log level', 1);
+	app.listen(port);
+	Log.info('Venus Server started.');
 };
 
-Server.prototype.start = function() {
-	this.app.listen(port);
-	this.io.sockets.on('connection', this._onSocketsConnection);
-
-	log.info('Venus Server started.')
+// param callback: function(deltaTime)
+function startTimer(callback, interval) {
+	var timer = {
+		'callback':callback,
+		'interval':interval, 
+		'lastTime':(new Date()).getTime()
+	};
+	var token = setInterval(_run, interval, timer);
+	timer.token = token;
+	timers[callback] = timer;
 };
 
-Server.prototype._onHttpRequest = function(request, response) {
-	log.debug('Url request ' + request.url);
+function stopTimer(callback) {
+	var timer = timers[callback];
+	clearInterval(timer.token);
+	delete timers[callback];
+};
 
-	var pathname = url.parse(request.url).pathname;
-	if (pathname == '/') {
-		pathname = clientdir + '/Demo.html';
+function getPlayer(socketId) {
+	return players[socketId];
+};
+
+// param: (protocal, [arg1], [arg2]..)
+function broadcast() {
+	io.sockets.emit.apply(io.sockets, arguments);
+};
+
+function on(protocal, func) {
+	listeners[protocal] = func;
+};
+
+function _onSocketsConnection(socket) {
+	var player = new Player(socket);
+	players[player.id] = player;
+	for (var protocal in listeners) {
+		socket.on(protocal, listeners[protocal]);
 	}
-	else {
-		pathname = clientdir + pathname;
-	}
-
-	fs.exists(pathname, function(exists) {
-		if (exists) {
-			fs.readFile(pathname, function(err, data) {
-				if (err) {
-					response.writeHead(500);
-					response.end('File loading error!');
-				}
-				else {
-					response.writeHead(200);
-					response.end(data);
-				}
-			});
-		}
-		else {
-			response.writeHead(404);
-			response.end('Page could not found! ' + pathname);
-		}
-	});
+	socket.on('disconnect', _onClientDisconnect);
+	Log.debug('new player:' + player.id);
 };
 
-Server.prototype._onSocketsConnection = function(socket) {
-
-	socket.on('request resources', function(request) {
-		console.log(request);
-		var response = {};
-		for (var reqtype in request) {
-			var resmap = {};
-			var reslist = request[reqtype];
-
-			for (var i in reslist) {
-				var resname = reslist[i];
-
-				var pathname = resdir + resname;
-
-				if (fs.existsSync(pathname)) {
-					switch (reqtype) {
-					case "Image":
-						var data = fs.readFileSync(pathname, "base64");
-						break;
-
-					case "Mesh":
-						var data = fs.readFileSync(pathname, "utf8");
-						break;
-
-					case "Shader":
-						var data = fs.readFileSync(pathname, "utf8");
-						break;
-					}
-
-					if (data) {
-						log.debug('Resource loaded. ' + pathname);
-						resmap[resname] = data;
-					}
-					else {
-						log.error('Resource loading failed! ' + pathname);
-					}
-				}
-				else {
-					log.error('Resource not exists! ' + pathname);
-				}
-			}
-			response[reqtype] = resmap;
-		}
-		socket.emit('response resources', response);
-	});
+function _onClientDisconnect() {
+	player = players[this.id];
+	delete players[this.id];
+	Log.debug('player:' + player.id + ' disconnect.');
 };
 
-module.exports = Server;
+function _run(timer) {
+	var date = new Date();
+	var now = date.getTime();
+	var delta = now - timer.lastTime;
+	timer.callback(delta);
+	timer.lastTime = now;
+};
+
+exports.start = start;
+exports.getPlayer = getPlayer;
+exports.players = players;
+exports.broadcast = broadcast;
+exports.on = on;
+exports.startTimer = startTimer;
+exports.stopTimer = stopTimer;
 
