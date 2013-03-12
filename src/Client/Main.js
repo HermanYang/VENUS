@@ -5,8 +5,12 @@ function webGLStart() {
 	canvas.width = document.body.clientWidth;
 	canvas.height = document.body.clientHeight;
 
-	VENUS.ResourceManager.getInstance().loadResources();
+	VENUS.ResourceManager.getInstance().loadResources(goOn);
+	setTimeout(goOn, 2000);
 
+}
+
+function  goOn() {
 	initCamera();
 
 	initCubes();
@@ -20,6 +24,7 @@ function webGLStart() {
 	WebGLRenderer = new VENUS.WebGLRenderer(canvas);
 
 	render();
+
 }
 
 function initLights() {
@@ -108,7 +113,7 @@ function initCubes() {
 
 	var cubeMaterial = new VENUS.Material(cubeColors);
 
-	var cubeTexture = VENUS.TextureCreater.createTextureFromUrl("../../res/Images/crate.gif", null);
+	var cubeTexture = new VENUS.Texture(VENUS.ResourceManager.getInstance().getImageByPath("./Images/crate.gif"));
 	cubeMaterial.addTexture(cubeTexture);
 
 	var cubeEntity = new VENUS.Entity(cubeMesh, cubeMaterial);

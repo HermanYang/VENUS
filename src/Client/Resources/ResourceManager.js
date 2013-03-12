@@ -1,58 +1,91 @@
 VENUS.ResourceManager = function() {
 	this._instance = null;
-	this.images = ["crate.gif", "b.jpg"];
-	this.models = [];
-	this.shaders = [];
+
+	this.images = {};
+	this.meshes = {};
+	this.shaders = {};
+
+	this.requestImageList = [];
+	this.requestMeshList = [];
+	this.requestShaderList = [];
+
+	this._initRequestResourceList();
+
 };
 
 VENUS.ResourceManager.getInstance = function() {
 	if (this._instance == null) {
 		this._instance = new VENUS.ResourceManager();
 	}
+
 	return this._instance;
 };
 
 VENUS.ResourceManager.prototype.loadResources = function(callBack) {
-	this._loadImages();
+	var socket = io.connect("http://localhost");
+	requestImageList = this.requestImageList;
+	requestMeshList = this.requestMeshList;
+	requestShaderList = this.requestShaderList;
 
-	this._loadModels();
+	var onConnected = function(data) {
+		requestList = {
+			"Image": requestImageList,
+			"Mesh": requestMeshList,
+			"Shader": requestShaderList
+		};
 
-	this._loadShaders();
+		socket.emit("request resources", requestList);
+	}
+	var context = this;
+	var onResourcesResponed = function(response) {
+		for (var responseType in response) {
+			switch (responseType) {
+			case "Image":
+				context._loadImages(response[responseType]);
+				break;
 
-	/*var intervalFunction = function() {
-		if (checkLoadingProgress()) {
-			if (callBack !== undefined && callBack instanceof function) {
-				callBack();
-				return true;
+			case "Shader":
+				context._loadShaders(response[responseType]);
+				break;
+
+			case "Mesh":
+				context._loadMeshed(response[responseType]);
+				break;
 			}
-		}
-		return false;
-	};
 
-	var intervalId = setInterval("if(intervalFunction()){clearInterval(intervalId);}", 1000);*/
+		}
+	}
+	socket.on("connect", onConnected);
+
+	socket.on("response resources", onResourcesResponed);
 
 	return this;
 };
 
-VENUS.ResourceManager.prototype._loadImages = function(name) {
-	var socket = io.connect("http://localhost");
-	var images = this.images;
-	var requestList = [];
-	for (var i in images) {
-		requestList.push("Images/" + images[i]);
-	}
-
-	socket.on("connect", function(data) {
-		console.info(data);
-		socket.emit("request resources", requestList);
-	});
-
-	socket.on("response resources", function(data) {
-		 console.log(data);
-	});
+VENUS.ResourceManager.prototype.getImageByPath = function(imgName) {
+	return this.images[imgName];
 };
 
-VENUS.ResourceManager.prototype._loadModels = function(name) {
+VENUS.ResourceManager.prototype._initRequestResourceList = function() {
+	this.requestImageList.push("./Images/crate.gif");
+
+	//	this.requestMeshList.push("ch_t.obj");
+}
+
+VENUS.ResourceManager.prototype._loadImages = function(imageRawDatas) {
+	var images = this.images;
+	var requestImageList = this.requestImageList;
+
+	for (var key in imageRawDatas) {
+		var imgType = VENUS.FileUtil.getFileSubfixFromName(key);
+		image = new Image();
+		image.src = "data:image/" + imgType + ";base64," + imageRawDatas[key];
+		images[key] = image;
+	}
+
+};
+
+VENUS.ResourceManager.prototype._loadMeshed = function(name) {
 
 };
 
@@ -60,25 +93,28 @@ VENUS.ResourceManager.prototype._loadShaders = function(name) {
 
 };
 
-VENUS.ResourceManager.prototype._checkLoadingProgress = function() {
-	for (var image in this.images) {
-		if (img.isReady == false) {
+VENUS.ResourceManager.prototype._checkResourcesLoaded = function() {
+	var requestImageList = this.requestImageList;
+	var requestMeshList = this.requestMeshList;
+	var requestShaderList = this.requestShaderList;
+
+	for (var i in requestImageList) {
+		if (this.images[requestImageList[i]] === undefined) {
 			return false;
 		}
 	}
 
-	for (var model in this.models) {
-		if (model.isReady == false) {
+	for (var i in requestMeshList) {
+		if (this.meshes[requestMeshList[i]] === undefined) {
 			return false;
 		}
 	}
 
-	for (var shader in this.shaders) {
-		if (shader.isReady == false) {
+	for (var i in requestShaderList) {
+		if (this.shaders[requestShaderList[i]] === undefined) {
 			return false;
 		}
 	}
-
 	return true;
 };
 

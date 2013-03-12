@@ -1,6 +1,7 @@
 var fs = require('fs');
 var log = require('./Logger.js');
 var url = require('url');
+var port = 8080;
 
 var clientdir = '../Client';
 var resdir = '../../res/';
@@ -12,7 +13,7 @@ var Server = function() {
 };
 
 Server.prototype.start = function() {
-	this.app.listen(8080);
+	this.app.listen(port);
 	this.io.sockets.on('connection', this._onSocketsConnection);
 
 	log.info('Venus Server started.')
@@ -51,27 +52,50 @@ Server.prototype._onHttpRequest = function(request, response) {
 
 Server.prototype._onSocketsConnection = function(socket) {
 
-	socket.on('request resources', function(reslist) {
-		var resmap = {};
-		for (var i in reslist) {
-			var resname = reslist[i];
-			var pathname = resdir + resname;
-			if (fs.existsSync(pathname)) {
-				var data = fs.readFileSync(pathname);
-				if (data) {
-					log.debug('Resource loaded. ' + pathname);
-					resmap[resname] = data;
+	socket.on('request resources', function(request) {
+		console.log(request);
+		var response = {};
+		for (var reqtype in request) {
+			var resmap = {};
+			var reslist = request[reqtype];
+
+			for (var i in reslist) {
+				var resname = reslist[i];
+
+				var pathname = resdir + resname;
+
+				if (fs.existsSync(pathname)) {
+					switch (reqtype) {
+					case "Image":
+						var data = fs.readFileSync(pathname, "base64");
+						break;
+
+					case "Mesh":
+						var data = fs.readFileSync(pathname, "utf8");
+						break;
+
+					case "Shader":
+						var data = fs.readFileSync(pathname, "utf8");
+						break;
+					}
+
+					if (data) {
+						log.debug('Resource loaded. ' + pathname);
+						resmap[resname] = data;
+					}
+					else {
+						log.error('Resource loading failed! ' + pathname);
+					}
 				}
 				else {
-					log.error('Resource loading failed! ' + pathname);
+					log.error('Resource not exists! ' + pathname);
 				}
 			}
-			else {
-				log.error('Resource not exists! ' + pathname);
-			}
+			response[reqtype] = resmap;
 		}
-		socket.emit('response resources', resmap);
+		socket.emit('response resources', response);
 	});
 };
 
 module.exports = Server;
+
