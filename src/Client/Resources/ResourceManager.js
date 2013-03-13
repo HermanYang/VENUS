@@ -69,7 +69,7 @@ VENUS.ResourceManager.prototype.getImageByPath = function(imgName) {
 VENUS.ResourceManager.prototype._initRequestResourceList = function() {
 	this.requestImageList.push("./Images/crate.gif");
 
-	//	this.requestMeshList.push("ch_t.obj");
+	this.requestMeshList.push("./Meshes/ch_t.obj");
 }
 
 VENUS.ResourceManager.prototype._loadImages = function(imageRawDatas) {
@@ -85,8 +85,41 @@ VENUS.ResourceManager.prototype._loadImages = function(imageRawDatas) {
 
 };
 
-VENUS.ResourceManager.prototype._loadMeshed = function(name) {
-
+VENUS.ResourceManager.prototype._loadMeshed = function(meshRawDates) {
+	for (var key in meshRawDates){
+		var meshType = VENUS.FileUtil.getFileSubfixFromName(key);
+		
+/**
+	parse obj
+	presume that pointlist is before texSTList
+*/
+		var pointList = []; //point list
+		var indexList = []; //index list
+		var texPointList = [];
+		var texFaceList = [];  //texture coordinate of face
+		var rawmesh = meshRawDates[key].split("\n");
+		for(var lineNum = 0; lineNum<rawmesh.length; lineNum++){
+			var tokens = rawmesh[lineNum].split(/\s+/);
+			if(tokens[0] == "v"){            //It is point coordinates;
+				for(var pi=1;pi<=3;pi++){
+					pointList.push(parseFloat(tokens[pi]));
+				}
+			}else if(tokens[0] == "vt"){	//it is texture coordinates;
+				for(var ti=1;ti<=2;ti++){   //only S and T coordinate
+					texPointList.push(parseFloat(tokens[ti]));
+				}
+			}else if(tokens[0] == "f")              //It is a face index,include coordinate and texture index;
+			{
+				for(var fi = 1; fi<=3; fi++){
+					var coordTex = tokens[fi].split("/");
+					indexList.push(parseInt(coordTex[0])-1);
+					texFaceList.push((texPointList[(parseInt(coordTex[1])-1)*2]));
+					texFaceList.push((texPointList[(parseInt(coordTex[1])-1)*2+1]));
+				}				
+			}
+			
+		}
+	}
 };
 
 VENUS.ResourceManager.prototype._loadShaders = function(name) {
