@@ -16,6 +16,9 @@ VENUS.Mesh = function(vertices, indices, normals, textureCoords) {
 
 };
 
+VENUS.Mesh.prototype.render = function(modelViewMatrix){
+	
+}
 VENUS.Mesh.prototype.setVertices = function(vertices){
 	this._vertices = vertices;
 	this.vertexBufferNeedUpdate = this._vertices == null ? false : true;

@@ -1,16 +1,19 @@
 function webGLStart() {
-	glMatrix.setMatrixArrayType(VENUS.FLOAT_ARRAY_TYPE);
-	canvas = document.getElementById("webgl-canvas");
-
-	canvas.width = document.body.clientWidth;
-	canvas.height = document.body.clientHeight;
-
-	VENUS.ResourceManager.getInstance().loadResources(goOn);
-	setTimeout(goOn, 2000);
-
+	VENUS.Engine.getInstance().getResourceManager().loadResources(goOn);
 }
 
-function  goOn() {
+function goOn() {
+	container = document.createElement("div");
+	container.style.height = "500";
+	container.style.width = "500";
+	document.body.appendChild(container);
+	container.appendChild(VENUS.Engine.getInstance().getCanvas());
+	container.appendChild(VENUS.Engine.getInstance().getCanvas()).width = 500;
+	container.appendChild(VENUS.Engine.getInstance().getCanvas()).height = 500;
+	var gl = VENUS.Engine.getInstance().getContext();
+	gl.clearColor(0.0, 0.0, 0.0, 1.0);
+	gl.enable(gl.DEPTH_TEST);
+	VENUS.Engine.getInstance().getRenderer().setSize(500, 500);
 	initCamera();
 
 	initCubes();
@@ -21,10 +24,7 @@ function  goOn() {
 
 	addEventListeners();
 
-	WebGLRenderer = new VENUS.WebGLRenderer(canvas);
-
 	render();
-
 }
 
 function initLights() {
@@ -36,9 +36,10 @@ function initLights() {
 }
 
 function initCamera() {
-	camera = new VENUS.PerspectiveCamera(45, canvas.width / canvas.height, 0.1, 100.0);
+	var canvas = VENUS.Engine.getInstance().getCanvas();
+	var factor = canvas.width / canvas.height;
+	camera = new VENUS.PerspectiveCamera(45, factor, 0.1, 100.0);
 	cameraNode = new VENUS.CameraSceneNode(camera);
-
 }
 
 function addSceneNodes() {
@@ -113,10 +114,10 @@ function initCubes() {
 
 	var cubeMaterial = new VENUS.Material(cubeColors);
 
-	var cubeTexture = new VENUS.Texture(VENUS.ResourceManager.getInstance().getImageByPath("./Images/crate.gif"));
+	var cubeTexture = new VENUS.Texture(VENUS.Engine.getInstance().getResourceManager().getImageByPath("./Images/crate.gif"));
 	cubeMaterial.addTexture(cubeTexture);
 
-	var cubeEntity = new VENUS.Entity(cubeMesh, cubeMaterial);
+	cubeEntity = new VENUS.Entity(cubeMesh, cubeMaterial);
 
 	sceneManager = new VENUS.SceneManager();
 
@@ -127,6 +128,13 @@ function initCubes() {
 
 function render() {
 	requestAnimationFrame(render);
-	WebGLRenderer.renderScene(sceneManager, cameraNode);
+	var gl = VENUS.Engine.getInstance().getContext();
+	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+	var viewMatrix = new VENUS.Matrix44(cameraNode.getViewMatrix());
+
+	var projectMatrix = camera.getProjectMatrix();
+
+	cubeNodeParent.render(projectMatrix, viewMatrix);
 }
 

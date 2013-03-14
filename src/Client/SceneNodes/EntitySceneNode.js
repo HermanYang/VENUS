@@ -18,3 +18,9 @@ VENUS.EntitySceneNode.prototype.getModelMatrix = function() {
 VENUS.EntitySceneNode.prototype.setScale = function(vector3){
 	this.scale = vector3;
 }
+
+VENUS.EntitySceneNode.prototype.render = function(projectMatrix, viewMatrix){
+	var modelViewMatrix = new VENUS.Matrix44(viewMatrix);
+	modelViewMatrix.multiply(this.getModelMatrix());
+	this.sceneObject.render(projectMatrix, modelViewMatrix);
+}
