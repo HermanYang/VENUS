@@ -1,17 +1,19 @@
 VENUS.Shader = function(type) {
+	this.gl = VENUS.Engine.getInstance().getWebGLConfiguration().getContext();
+
 	this.type = type;
 	this._sourceCode = null;
 	this._shader = null;
 }
 
 VENUS.Shader.prototype.compile = function(defines) {
-	var gl = VENUS.Engine.getInstance().getContext();
+	var gl = this.gl;
 	var type = this.type;
-
-	if (type == VENUS.FRAGMENT_SHADER_TYPE) {
+	var webglConst = VENUS.Engine.getWebGLConstants();
+	if (type == webglConst.SHADER_TYPE_FRAGMENT) {
 		this._shader = gl.createShader(gl.FRAGMENT_SHADER);
 	}
-	else if (type == VENUS.VERTEX_SHADER_TYPE) {
+	else if (type == webglConst.SHADER_TYPE_VERTEX) {
 		this._shader = gl.createShader(gl.VERTEX_SHADER);
 	}
 	else {
