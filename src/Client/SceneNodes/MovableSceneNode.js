@@ -1,4 +1,4 @@
-VENUS.MovableSceneNode = function(object) {
+VENUS.MovableSceneNode = function(object) {	
 	VENUS.SceneNode.call(this, object);
 
 	this.relativeTransformMatrix = new VENUS.Matrix44();
@@ -41,6 +41,11 @@ VENUS.MovableSceneNode.prototype.rotate = function(degree, axisVector3) {
 	return this;
 }
 
+VENUS.MovableSceneNode.prototype.rotateY = function(degree) {
+	this.rotate(degree, new VENUS.Vector3(0, 1, 0));
+	return this;
+}
+
 // get the finnal transform matrix
 VENUS.MovableSceneNode.prototype.getRotationTransformMatrix = function() {
 	var rotationMatrix = new VENUS.Matrix44(this.relativeRotationMatrix);
@@ -51,7 +56,7 @@ VENUS.MovableSceneNode.prototype.getRotationTransformMatrix = function() {
 	return rotationMatrix;
 }
 
-// get the finnal transform matrix
+// get the finnal transform matrix includes rotation and translation transform
 VENUS.MovableSceneNode.prototype.getTransformMatrix = function() {
 	var transformMatrix = new VENUS.Matrix44(this.relativeTransformMatrix);
 	if (this.parent !== undefined && this.parent != null && this.parent instanceof VENUS.MovableSceneNode) {

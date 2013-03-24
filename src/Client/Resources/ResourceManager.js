@@ -1,7 +1,11 @@
 VENUS.ResourceManager = function() {
+	this._socket = new VENUS.Socket();
+
 	this._images = {};
-	this._meshes = {};
+	this._models = {};
 	this._shaders = {};
+
+	this._models = {};
 
 	this._requestImageList = [];
 	this._requestMeshList = [];
@@ -13,33 +17,34 @@ VENUS.ResourceManager = function() {
 };
 
 VENUS.ResourceManager.prototype.loadResources = function(callBack) {
-	var socket = io.connect("http://localhost");
+	var socket = this._socket;
 	var requestImageList = this._requestImageList;
 	var requestMeshList = this._requestMeshList;
 	var requestShaderList = this._requestShaderList;
 
 	var onConnected = function(data) {
 		requestList = {
-			"Image": requestImageList,
-			"Mesh": requestMeshList,
-			"Shader": requestShaderList
+			"image": requestImageList,
+			"model": requestMeshList,
+			"shader": requestShaderList
 		};
-
-		socket.emit("request resources", requestList);
+		socket.emit(SocketCommandConstants.REQUESTRESOURCES, requestList);
 	}
+	socket.setCommandCallback(SocketCommandConstants.CONNECT, onConnected);
+
 	var context = this;
 	var onResourcesResponed = function(response) {
 		for (var responseType in response) {
 			switch (responseType) {
-			case "Image":
+			case "image":
 				context._loadImages(response[responseType]);
 				break;
 
-			case "Shader":
+			case "shader":
 				context._loadShaders(response[responseType]);
 				break;
 
-			case "Mesh":
+			case "model":
 				context._loadMeshed(response[responseType]);
 				break;
 			}
@@ -48,39 +53,37 @@ VENUS.ResourceManager.prototype.loadResources = function(callBack) {
 		context._initDefaultShaderProgram();
 		callBack();
 	}
-	socket.on("connect", onConnected);
-
-	socket.on("response resources", onResourcesResponed);
+	socket.setCommandCallback(SocketCommandConstants.RESPONSERESOURCES, onResourcesResponed);
 
 	return this;
 };
 
-VENUS.ResourceManager.prototype.getImageByPath = function(imgPath) {
-	return this._images[imgPath];
+VENUS.ResourceManager.prototype.getImageByPath = function(path) {
+	return this._images[path];
 };
 
-VENUS.ResourceManager.prototype.getMeshByPath = function(imgPath) {
-	return this._meshes[imgPath];
+VENUS.ResourceManager.prototype.getModelByPath = function(path) {
+	return this._models[path];
 };
 
-VENUS.ResourceManager.prototype.getShaderByPath = function(imgPath) {
-	return this._shaders[imgPath];
+VENUS.ResourceManager.prototype.getShaderByPath = function(path) {
+	return this._shaders[path];
 };
 
-VENUS.ResourceManager.prototype.getDefaultProgram = function(imgPath) {
+VENUS.ResourceManager.prototype.getDefaultProgram = function() {
 	return this._defaultShaderProgram;
 };
 
 VENUS.ResourceManager.prototype._initRequestResourceList = function() {
-	// define the images to preload
-	this._requestImageList.push("./Images/crate.gif");
+	// define the images to load
+	this._requestImageList.push("/images/crate.gif");
 
-	// define the meshes to preload
-	this._requestMeshList.push("./Meshes/ch_t.obj");
+	// define the meshes to load
+	this._requestMeshList.push("/models/objs/ch_t.obj");
 
-	// define the shaders to preload
-	this._requestShaderList.push("./Shaders/basic.vert");
-	this._requestShaderList.push("./Shaders/basic.frag");
+	// define the shaders to load
+	this._requestShaderList.push("/shaders/basic/basic.vert");
+	this._requestShaderList.push("/shaders/basic/basic.frag");
 };
 
 VENUS.ResourceManager.prototype._loadImages = function(imageRawDatas) {
@@ -96,8 +99,10 @@ VENUS.ResourceManager.prototype._loadImages = function(imageRawDatas) {
 
 };
 
-VENUS.ResourceManager.prototype._loadMeshed = function(meshRawDates) {
-	for (var key in meshRawDates) {
+VENUS.ResourceManager.prototype._loadMeshed = function(meshRawDatas) {
+	this._models = meshRawDatas;
+
+	for (var key in meshRawDatas) {
 		var meshType = VENUS.FileUtil.getFileSubfixFromName(key);
 
 		/**
@@ -108,7 +113,7 @@ VENUS.ResourceManager.prototype._loadMeshed = function(meshRawDates) {
 		var indexList = []; //index list
 		var texPointList = [];
 		var texFaceList = []; //texture coordinate of face
-		var rawmesh = meshRawDates[key].split("\n");
+		var rawmesh = meshRawDatas[key].split("\n");
 		for (var lineNum = 0; lineNum < rawmesh.length; lineNum++) {
 			var tokens = rawmesh[lineNum].split(/\s+/);
 			if (tokens[0] == "v") { //It is point coordinates;
@@ -133,20 +138,22 @@ VENUS.ResourceManager.prototype._loadMeshed = function(meshRawDates) {
 	}
 };
 
-VENUS.ResourceManager.prototype._loadShaders = function(shaderRawData) {
-	this._shaders = shaderRawData;
+VENUS.ResourceManager.prototype._loadShaders = function(shaderRawDatas) {
+	this._shaders = shaderRawDatas;
 };
 
 VENUS.ResourceManager.prototype._initDefaultShaderProgram = function() {
-	var vertexShader = new VENUS.Shader(VENUS.VERTEX_SHADER_TYPE);
-	var fragShader = new VENUS.Shader(VENUS.FRAGMENT_SHADER_TYPE);
+	var webglConst = VENUS.Engine.getWebGLConstants();
+
+	var vertexShader = new VENUS.Shader(webglConst.SHADER_TYPE_VERTEX);
+	var fragShader = new VENUS.Shader(webglConst.SHADER_TYPE_FRAGMENT);
 
 	this._defaultShaderProgram = new VENUS.Program();
 
-	vertexShader.setShaderSourceCode(this.getShaderByPath("./Shaders/basic.vert"));
+	vertexShader.setShaderSourceCode(this.getShaderByPath("/shaders/basic/basic.vert"));
 	vertexShader.compile();
 
-	fragShader.setShaderSourceCode(this.getShaderByPath("./Shaders/basic.frag"));
+	fragShader.setShaderSourceCode(this.getShaderByPath("/shaders/basic/basic.frag"));
 	fragShader.compile();
 
 	this._defaultShaderProgram.attachVertexShader(vertexShader);
