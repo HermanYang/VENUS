@@ -6,3 +6,6 @@
 
 #generated directory
 res/models/gen/
+
+#nodejs modules
+/node_modules
