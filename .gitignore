@@ -3,3 +3,6 @@
 
 #kubuntu directory infomation
 .directory
+
+#generated directory
+res/models/gen/
