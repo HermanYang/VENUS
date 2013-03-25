@@ -1,12 +1,31 @@
+if ("undefined" !== typeof module) {
+	VENUS = module.require("../../Venus.js");
+}
+
 VENUS.FileUtil = {};
 
-VENUS.FileUtil.getFileSubfixFromName = function(fileName){
-	var index = fileName.lastIndexOf(".");
-	if(index == -1 && index < (fileName.length - 1)){
-		// this file has no suffixes
+VENUS.FileUtil.getFileExtensionByPath = function(path) {
+	var index = path.lastIndexOf(".");
+	if (index == - 1 && index < (path.length - 1)) {
+		// this file has no extension 
 		return "";
 	}
 
-	var subfixName =  fileName.slice(index + 1);
-	return subfixName;
+	var extension = path.slice(index + 1);
+
+	return extension;
+}
+
+VENUS.FileUtil.getFileMainNameByPath = function(path) {
+	var indexStart = path.lastIndexOf("/") + 1;
+	var indexEnd = path.lastIndexOf(".");
+	if( indexEnd === -1){
+		indexEnd = path.length - 1;
+	}
+
+	return path.substring(indexStart, indexEnd);
+};
+
+if ("undefined" !== typeof module) {
+	module.exports = VENUS.FileUtil;
 }

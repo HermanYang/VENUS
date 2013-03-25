@@ -1,4 +1,4 @@
-ServerUtil = module.require("./Utilities/ServerUtil.js");
+ServerUtil = module.require("./utils/ServerUtil.js");
 Log = module.require("./Log.js");
 SocketsServer = module.require("./SocketsServer.js");
 

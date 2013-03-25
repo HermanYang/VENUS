@@ -1,6 +1,7 @@
+Log = module.require("./Log.js");
 Server = module.require("./Server.js");
-ServerUtil = module.require("./Utilities/ServerUtil.js");
-SocketCommandConstants = module.require("../Share/SocketCommandConstants.js");
+ServerUtil = module.require("./utils/ServerUtil.js");
+SocketCommandConstants = module.require("../share/SocketCommandConstants.js");
 
 var handler = function(socket, request) {
 	serverUtil = new ServerUtil();
@@ -26,7 +27,11 @@ var handler = function(socket, request) {
 					break;
 
 				case "model":
+					var fileName = serverUtil.getFileMainNameByPath(pathname);
+					var extension = ".js";
+					var pathname = resdir + "/models/gen/" + fileName + extension;
 					var data = fsManager.readFileSync(pathname, "utf8");
+					data = JSON.parse(data);
 					break;
 
 				case "shader":
@@ -54,4 +59,3 @@ var server = new Server();
 server.addCommandHander(SocketCommandConstants.REQUESTRESOURCES, handler);
 
 server.start(8080);
-

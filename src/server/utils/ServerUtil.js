@@ -1,6 +1,7 @@
 Log = module.require("../Log.js");
 ContentTypeMap = module.require("../ContentTypeMap.js");
 assert = module.require("assert");
+FileUtil = module.require("../../share/utils/FileUtil.js");
 
 ServerUtil = function() {
 	this._urlUtil = module.require("url");
@@ -34,7 +35,7 @@ ServerUtil.prototype._initServerConfig = function(){
 };
 
 ServerUtil.prototype.getHttpHeadMessage = function(path) {
-	var type = this.getFileSubfixFromName(path);
+	var type = this.getFileExtensionByPath(path);
 	var contentType = ContentTypeMap[type];
 
 	if (contentType === undefined) {
@@ -46,15 +47,17 @@ ServerUtil.prototype.getHttpHeadMessage = function(path) {
 	};
 };
 
-ServerUtil.prototype.getFileSubfixFromName = function(fileName) {
-	var index = fileName.lastIndexOf(".");
-	if (index == - 1 && index < (fileName.length - 1)) {
-		// this file has no suffixes
-		return "";
-	}
+ServerUtil.prototype.getFileMainNameByPath = function(path) {
+	return FileUtil.getFileMainNameByPath(path);
+}
 
-	var subfixName = fileName.slice(index + 1);
-	return subfixName;
+ServerUtil.prototype.isFile = function(path){
+	var stats = this._fileSystemManager.Stats();
+	return stats.isFile(path);
+}
+
+ServerUtil.prototype.getFileExtensionByPath = function(path) {
+	return FileUtil.getFileExtensionByPath(path);
 }
 
 ServerUtil.prototype.getUrlUtil = function() {

@@ -1,6 +1,6 @@
 Log = module.require("./Log.js");
-ServerUtil = module.require("./Utilities/ServerUtil.js");
-SocketCommandConstants = module.require("../Share/SocketCommandConstants.js");
+ServerUtil = module.require("./utils/ServerUtil.js");
+SocketCommandConstants = module.require("../share/SocketCommandConstants.js");
 
 SocketsServer = function(httpServer) {
 	this._sockets = module.require("socket.io").listen(httpServer).sockets;
@@ -20,10 +20,8 @@ SocketsServer.prototype._startSocket = function(socket) {
 	var context = this;
 	var commandHanders = this._commandhandlers;
 
-	Log.debug(context);
 	var onConnected = function(socket) {
 		Log.info(socket.id, " is connected");
-		Log.debug(context);
 		for (var command in commandHanders) {
 			context._handleCommand(command, socket);
 		}
@@ -44,4 +42,3 @@ SocketsServer.prototype._handleCommand = function(command, socket) {
 };
 
 module.exports = SocketsServer;
-
