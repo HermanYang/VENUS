@@ -29,5 +29,12 @@ do
 	fi
 done	
 
+socket_io="./node_modules/socket.io"
+if [ ! -d $socket_io ]
+then
+	echo $socket_io" is not found, now let's install"
+	npm install socket_io
+fi
+
 #start venus server
 node ./server/main.js

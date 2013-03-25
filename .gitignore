@@ -1,11 +1,14 @@
-#vim swp file
+#ignore vim swp file
 *.swp
 
-#kubuntu directory infomation
+#ignore kubuntu directory infomation
 .directory
 
-#generated directory
+#ignore generated directory
 res/models/gen/
 
-#nodejs modules
-/node_modules
+#node.js modules
+src/node_modules
+
+#ignore npm debug log
+src/npm-debug.log
