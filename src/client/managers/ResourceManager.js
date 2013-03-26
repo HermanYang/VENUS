@@ -7,20 +7,23 @@ VENUS.ResourceManager = function() {
 
 	this._models = {};
 
-	this._requestImageList = [];
-	this._requestMeshList = [];
-	this._requestShaderList = [];
+	this._requestImagesList = [];
+	this._requestModelsList = [];
+	this._requestShadersList = [];
 
 	this._defaultShaderProgram = null;
 
 	this._initRequestResourceList();
+
+	this._loadedResources = 0;
+	this._interval = 1;
 };
 
-VENUS.ResourceManager.prototype.loadResources = function(callBack) {
+VENUS.ResourceManager.prototype.loadResources = function(callback) {
 	var socket = this._socket;
-	var requestImageList = this._requestImageList;
-	var requestMeshList = this._requestMeshList;
-	var requestShaderList = this._requestShaderList;
+	var requestImageList = this._requestImagesList;
+	var requestMeshList = this._requestModelsList;
+	var requestShaderList = this._requestShadersList;
 
 	var onConnected = function(data) {
 		requestList = {
@@ -51,7 +54,15 @@ VENUS.ResourceManager.prototype.loadResources = function(callBack) {
 
 		}
 		context._initDefaultShaderProgram();
-		callBack();
+
+		var intervalId = setInterval((function(self) {
+			return function() {
+				if (self._isResourcesLoaded()) {
+					callback();
+					clearInterval(intervalId);
+				}
+			}
+		})(context), this._interval);
 	}
 	socket.setCommandCallback(SocketCommandConstants.RESPONSERESOURCES, onResourcesResponed);
 
@@ -76,23 +87,28 @@ VENUS.ResourceManager.prototype.getDefaultProgram = function() {
 
 VENUS.ResourceManager.prototype._initRequestResourceList = function() {
 	// define the images to load
-	this._requestImageList.push("/images/crate.gif");
+	this._requestImagesList.push("/images/crate.gif");
 
 	// define the meshes to load
-	this._requestMeshList.push("/models/objs/ch_t.obj");
+	this._requestModelsList.push("/models/objs/ch_t.obj");
+	this._requestModelsList.push("/models/objs/macbook.obj");
 
 	// define the shaders to load
-	this._requestShaderList.push("/shaders/basic/basic.vert");
-	this._requestShaderList.push("/shaders/basic/basic.frag");
+	this._requestShadersList.push("/shaders/basic/basic.vert");
+	this._requestShadersList.push("/shaders/basic/basic.frag");
 };
 
 VENUS.ResourceManager.prototype._loadImages = function(imageRawDatas) {
 	var images = this._images;
-	var requestImageList = this._requestImageList;
-
+	var requestImageList = this._requestImagesList;
+	var context = this;
 	for (var key in imageRawDatas) {
 		var imgType = VENUS.FileUtil.getFileExtensionByPath(key);
+		var loaded = false;
 		image = new Image();
+		image.onload = function() {
+			context._loadedResources += 1;
+		};
 		image.src = "data:image/" + imgType + ";base64," + imageRawDatas[key];
 		images[key] = image;
 	}
@@ -100,10 +116,20 @@ VENUS.ResourceManager.prototype._loadImages = function(imageRawDatas) {
 
 VENUS.ResourceManager.prototype._loadMeshed = function(modelsData) {
 	this._models = modelsData;
+	this._loadedResources += this._requestModelsList.length;
 };
 
 VENUS.ResourceManager.prototype._loadShaders = function(shaderRawDatas) {
 	this._shaders = shaderRawDatas;
+	this._loadedResources += this._requestShadersList.length;
+};
+
+VENUS.ResourceManager.prototype._isResourcesLoaded = function() {
+	var requestResourcesAmount = this._requestImagesList.length + this._requestModelsList.length + this._requestShadersList.length;
+	if (requestResourcesAmount === this._loadedResources) {
+		return true;
+	}
+	return false;
 };
 
 VENUS.ResourceManager.prototype._initDefaultShaderProgram = function() {

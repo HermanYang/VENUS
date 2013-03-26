@@ -82,10 +82,4 @@ ServerUtil.prototype.getFileSystemManager = function() {
 	return this._fileSystemManager;
 };
 
-ServerUtil.prototype.include = function(path) {
-	fsManager = this._fileSystemManager;
-	var file = fsManager.readFileSync(path, "utf8");
-	eval(file);
-};
-
 module.exports = ServerUtil;

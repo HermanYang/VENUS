@@ -2,7 +2,7 @@
 
 gen="../res/models/gen"
 objs="../res/models/objs"
-generator="./../tools/obj_json_translator.py"
+converter="./../tools/obj_to_json_converter.js"
 
 if [ -d $gen ] 
 then
@@ -22,7 +22,7 @@ do
 		fileName=${file%.*}
 		if [ $fileSuffic = "obj" ]
 		then
-			python $generator -i $objs"/"$file -o $gen"/"$fileName".js"
+			node $converter $objs"/"$file $gen"/"$fileName".js"
 		else
 			echo $objs"/"$file" is not an obj file"
 		fi

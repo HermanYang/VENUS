@@ -17,13 +17,27 @@ function initScene() {
 	scene = sceneManager.createScene("basic");
 
 	//create camera scene node
-	cameraNode = scene.createPerspectiveCameraSceneNode(45, 0.01, 100);
+	cameraNode = scene.createPerspectiveCameraSceneNode(45, 0.01, 1000);
 	scene.setCurrentCameraNode(cameraNode);
-	for (var i = 0; i < 200; i++) {
+
+	for (var i = 0; i < 100; i++) {
 		var cubeNode = createCubeScnenNode("cube", 3 * Math.random());
 		cubeNode.translate(50 * Math.random(), new VENUS.Vector3(Math.random(), Math.random(), Math.random()));
 		scene.getRootSceneNode().addChild(cubeNode);
 	}
+
+	var node = scene.createEntitySceneNode("model");
+	var material = node.getSceneObject().getMaterial();
+	node.getSceneObject().setMesh(VENUS.Mesh.createMeshFromModel("/models/objs/ch_t.obj"));
+	var texture = new VENUS.Texture();
+	image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/crate.gif");
+	texture.createTexture(image);
+	material.addTexture(texture);
+
+	cameraNode.addChild(node);
+	node.translate(-15, new VENUS.Vector3(0,0,1));
+	node.setScale(new VENUS.Vector3(0.3, 0.3, 0.3));
+
 }
 
 function createCubeScnenNode(name, size) {
