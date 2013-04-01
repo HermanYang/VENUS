@@ -1,10 +1,6 @@
-if ("undefined" !== typeof module) {
-	VENUS = module.require("../../Venus.js");
-}
+FileUtil = {};
 
-VENUS.FileUtil = {};
-
-VENUS.FileUtil.getFileExtensionByPath = function(path) {
+FileUtil.getFileExtensionByPath = function(path) {
 	var index = path.lastIndexOf(".");
 	if (index == - 1 && index < (path.length - 1)) {
 		// this file has no extension 
@@ -16,7 +12,7 @@ VENUS.FileUtil.getFileExtensionByPath = function(path) {
 	return extension;
 }
 
-VENUS.FileUtil.getFileMainNameByPath = function(path) {
+FileUtil.getFileMainNameByPath = function(path) {
 	var indexStart = path.lastIndexOf("/") + 1;
 	var indexEnd = path.lastIndexOf(".");
 	if( indexEnd === -1){
@@ -27,5 +23,5 @@ VENUS.FileUtil.getFileMainNameByPath = function(path) {
 };
 
 if ("undefined" !== typeof module) {
-	module.exports = VENUS.FileUtil;
+	module.exports = FileUtil;
 }

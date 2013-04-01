@@ -24,30 +24,6 @@ VENUS.Entity.prototype.getMaterial = function() {
 	return this._material;
 };
 
-VENUS.Entity.prototype._updateTextures = function() {
-	var gl = this._gl;
-
-	for (var i = 0; i < this._material.textureBufferNeedUpdates.length; i++) {
-		if (this._material.textureBufferNeedUpdates[i]) {
-			var textureBuffer = this._material.textureBuffers[i];
-			if (textureBuffer != null || textureBuffer !== undefined) {
-				// delete outdated texture
-				gl.deleteTexture(textureBuffer);
-			}
-
-			this._material.textureBuffers[i] = gl.createTexture();
-			textureBuffer = this._material.textureBuffers[i];
-
-			gl.bindTexture(gl.TEXTURE_2D, textureBuffer);
-			gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this._material._textures[i].image);
-			gl.bindTexture(gl.TEXTURE_2D, null);
-		}
-	}
-}
-
-VENUS.Entity.prototype.render = function(projectionMatrix, modelViewMatrix) {
-	this._renderer.render(projectionMatrix, modelViewMatrix);
+VENUS.Entity.prototype.render = function(projectionMatrix, viewMatrix, modelMatrix) {
+	this._renderer.render(projectionMatrix, viewMatrix, modelMatrix);
 }

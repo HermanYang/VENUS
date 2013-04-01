@@ -1,58 +1,158 @@
 VENUS.Program = function() {
-	this.gl = VENUS.Engine.getInstance().getWebGLConfiguration().getContext();
+	this._context = VENUS.Engine.getInstance().getWebGLConfiguration().getContext();
+	this._shaderProgram = null;
+	this._fragShader = null;
+	this._vertexShader = null;
 
-	var gl = this.gl;
-	this._shaderProgram = gl.createProgram();
-}
+};
 
 VENUS.Program.prototype.attachFragmentShader = function(Fs) {
-	var gl = this.gl;
-	gl.attachShader(this._shaderProgram, Fs.getShader());
-}
+	this._fragShader = Fs.getShader();
+};
 
 VENUS.Program.prototype.attachVertexShader = function(Vs) {
-	var gl = this.gl;
-	gl.attachShader(this._shaderProgram, Vs.getShader());
-}
+	this._vertexShader = Vs.getShader();
+};
 
 VENUS.Program.prototype.link = function() {
-	var gl = this.gl;
+	var gl = this._context;
+
+	this.releaseProgram();
+
+	this._shaderProgram = gl.createProgram();
+
+	gl.attachShader(this._shaderProgram, this._vertexShader);
+	gl.attachShader(this._shaderProgram, this._fragShader);
+
 	gl.linkProgram(this._shaderProgram);
-}
+};
 
 VENUS.Program.prototype.bind = function() {
-	var gl = this.gl;
+	var gl = this._context;
 
 	if (!gl.getProgramParameter(this._shaderProgram, gl.LINK_STATUS)) {
 		alert("Could not initialise shaders");
 	}
 	gl.useProgram(this._shaderProgram);
-}
+};
 
-VENUS.Program.prototype.setAttribute = function(attributesName, buf, stride) {
-	var gl = this.gl;
-	var attributeLocation = gl.getAttribLocation(this._shaderProgram, attributesName);
+VENUS.Program.prototype.setAttribute = function(attributesName, arrayBuffer, stride, offset) {
+	var gl = this._context;
 
-	gl.enableVertexAttribArray(attributeLocation);
-	gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-	gl.vertexAttribPointer(attributeLocation, stride, gl.FLOAT, false, 0, 0);
-}
+	var size = arrayBuffer.getDimension();
+	var type = arrayBuffer.getDataElementType();
+	var normalize = false;
+
+	if (arrayBuffer.bind()) {
+		var attributeLocation = gl.getAttribLocation(this._shaderProgram, attributesName);
+		gl.enableVertexAttribArray(attributeLocation);
+		gl.vertexAttribPointer(attributeLocation, size, type, normalize, stride, offset);
+	}
+};
 
 VENUS.Program.prototype.releaseProgram = function() {
+	var gl = this._context;
 
+	if (this._shaderProgram !== null) {
+		gl.deleteProgram(this._shaderProgram);
+		this._shaderProgram = null;
+	}
+};
+
+VENUS.Program.prototype.setUniformMatrix44 = function(paramName, value) {
+	var gl = this._context;
+	var address = gl.getUniformLocation(this._shaderProgram, paramName);
+
+	gl.uniformMatrix4fv(address, false, value.getElements());
+};
+
+VENUS.Program.prototype.setUniformMatrix44Array = function(paramName, value) {
+	var gl = this._context;
+	var address = gl.getUniformLocation(this._shaderProgram, paramName);
+	var size = value.length * 16;
+	matrixs = new VENUS.FLOAT_ARRAY(size);
+	for (var i = 0; i < value.length; ++i) {
+		var elements = value[i].getElements();
+		for (var j = 0; j < elements.length; ++j) {
+			var index = i * 16 + j;
+			matrixs[index] = elements[j];
+		}
+	}
+
+	gl.uniformMatrix4fv(address, false, matrixs);
+};
+
+VENUS.Program.prototype.setUniformInt = function(paramName, value) {
+	var gl = this._context;
+	var address = gl.getUniformLocation(this._shaderProgram, paramName);
+
+	gl.uniform1i(address, value);
+};
+
+VENUS.Program.prototype.setUniformIntArray = function(paramName, value) {
+	var gl = this._context;
+	var address = gl.getUniformLocation(this._shaderProgram, paramName);
+	gl.uniform1iv(address, value);
+
+};
+
+VENUS.Program.prototype.setUniformFloat = function(paramName, value) {
+	var gl = this._context;
+	var address = gl.getUniformLocation(this._shaderProgram, paramName);
+
+	gl.uniform1f(address, value);
+};
+
+VENUS.Program.prototype.setUniformFloatArray = function(paramName, value) {
+	var gl = this._context;
+	var address = gl.getUniformLocation(this._shaderProgram, paramName);
+
+	gl.uniform1fv(address, value);
+};
+
+VENUS.Program.prototype.setUniformVector2 = function(paramName, vector2) {};
+
+VENUS.Program.prototype.setUniformVector3 = function(paramName, vector3) {
+	var gl = this._context;
+	var address = gl.getUniformLocation(this._shaderProgram, paramName);
+
+	gl.uniform3f(address, vector3.getX(), vector3.getY(), vector3.getZ());
+
+};
+
+VENUS.Program.prototype.setUniformVector3Array = function(paramName, vector3Array) {
+	var gl = this._context;
+	var unpackedData = SharedUtil.unpackedVectors(vector3Array, 3);
+	var address = gl.getUniformLocation(this._shaderProgram, paramName);
+
+	gl.uniform3fv(address, unpackedData);
+};
+
+VENUS.Program.prototype.setUniformVector4 = function(paramName, vector4) {};
+
+VENUS.Program.prototype.setSampler = function(paramName, value) {};
+
+VENUS.Program.prototype.setSamplerArray = function(paramName, value) {};
+
+VENUS.Program.prototype.setTexture = function(paramName, texture) {};
+
+VENUS.Program.prototype.setTextureArray = function(paramName, textures) {};
+
+VENUS.Program.prototype.getLog = function() {
+	var gl = this._context;
+	SharedUtil.assert(this._shaderProgram !== null, "Program should be initilized");
+
+	gl.getProgramInfoLog(this._shaderProgram);
+};
+
+VENUS.Program.prototype.getUniformValue = function(paramName) {
+	var gl = this._context;
+	var address = gl.getUniformLocation(this._shaderProgram, paramName);
+	return gl.getUniform(this._shaderProgram, address);
 }
 
-VENUS.Program.prototype.setUniformMatrix44 = function(uniformValName, matrix44) {
-	var gl = this.gl;
-
-	var uniformValueAddress = gl.getUniformLocation(this._shaderProgram, uniformValName);
-	gl.uniformMatrix4fv(uniformValueAddress, false, matrix44.convertToGLMatrixFormat());
-}
-
-VENUS.Program.prototype.setUniformInt = function(uniformValName, intValue) {
-	var gl = this.gl;
-
-	var uniformValueAddress = gl.getUniformLocation(this._shaderProgram, uniformValName);
-	gl.uniform1i(uniformValueAddress, intValue);
+VENUS.Program.prototype.logUniformValue = function(paramName) {
+	Log.verbose(paramName);
+	Log.info(this.getUniformValue(paramName));
 }
 

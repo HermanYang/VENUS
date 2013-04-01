@@ -1,6 +1,6 @@
-Log = module.require("./Log.js");
+Log = module.require("../share/utils/Log.js");
 ServerUtil = module.require("./utils/ServerUtil.js");
-SocketCommandConstants = module.require("../share/SocketCommandConstants.js");
+SocketCommandConstants = module.require("../share/constants/SocketCommandConstants.js");
 
 SocketsServer = function(httpServer) {
 	this._sockets = module.require("socket.io").listen(httpServer).sockets;

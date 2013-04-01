@@ -2,7 +2,7 @@ VENUS.Engine = function() {
 	this._canvas = document.createElement("canvas");
 
 	var gl = this._canvas.getContext("experimental-webgl");
-	VENUS.assert(gl !== null, "webgl is not supported in this browser!");
+	SharedUtil.assert(gl !== null, "webgl is not supported in this browser!");
 
 	this._resManager = new VENUS.ResourceManager();
 	this._webglRenderer = new VENUS.WebGLConfiguration(gl);
@@ -68,4 +68,3 @@ VENUS.Engine.prototype.setCanvasSize = function(width, height, affactViewPort) {
 		this._webglRenderer.setSize(width, height);
 	}
 }
-

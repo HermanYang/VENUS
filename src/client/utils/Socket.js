@@ -8,7 +8,7 @@ VENUS.Socket.prototype.emit= function(command, data){
 };
 
 VENUS.Socket.prototype.setCommandCallback = function(command, callback){
-	VENUS.assert(callback !== undefined && callback !== null);
+	SharedUtil.assert(callback !== undefined && callback !== null);
 	var socket = this._socket;
 	socket.on(command, callback);
 };

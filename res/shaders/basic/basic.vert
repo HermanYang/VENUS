@@ -1,9 +1,22 @@
-attribute vec3 aVertexPosition;
+attribute vec3 aVertex;
+attribute vec3 aNormal;
 attribute vec2 aTextureCoord; 
-uniform mat4 uMVMatrix; 
-uniform mat4 uPMatrix;
+
+uniform mat4 uModelViewMatrix; 
+uniform mat4 uProjectionMatrix;
+uniform mat4 uNormalMatrix;
+
 varying vec2 vTextureCoord;
+varying vec4 vVertex;
+varying vec3 vTransformedNormal;
+varying mat4 vModelViewMatrix;
+
 void main(void) {
-	gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+
 	vTextureCoord = aTextureCoord;
-}
+	vVertex = uModelViewMatrix * vec4(aVertex, 1.0);
+	vTransformedNormal = normalize( vec3(uNormalMatrix * vec4(aNormal, 1.0)) );
+	vModelViewMatrix = uModelViewMatrix;
+
+	gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertex, 1.0);
+} 

@@ -18,7 +18,7 @@ VENUS.Mesh = function() {
 VENUS.Mesh.createMeshFromModel = function(filePath) {
 	var resManager = VENUS.Engine.getInstance().getResourceManager();
 	var model = resManager.getModelByPath(filePath);
-	VENUS.assert(model !== undefined, filePath + " is not a model");
+	SharedUtil.assert(model !== undefined, filePath + " is not a model");
 
 	var vertices = [];
 	var indices = [];
@@ -109,11 +109,30 @@ VENUS.Mesh.createCubeMesh = function(lengthOfSize) {
 
 	// Left face
 	new VENUS.Vector2(0.0, 0.0), new VENUS.Vector2(1.0, 0.0), new VENUS.Vector2(1.0, 1.0), new VENUS.Vector2(0.0, 1.0)];
-	var cubeNormals = null;
+
+	var cubeNormals = [
+	// Front face
+	new VENUS.Vector3(0.0, 0.0, 1.0), new VENUS.Vector3(0.0, 0.0, 1.0), new VENUS.Vector3(0.0, 0.0, 1.0), new VENUS.Vector3(0.0, 0.0, 1.0),
+
+	// Back face
+	new VENUS.Vector3(0.0, 0.0, - 1.0), new VENUS.Vector3(0.0, 0.0, - 1.0), new VENUS.Vector3(0.0, 0.0, - 1.0), new VENUS.Vector3(0.0, 0.0, - 1.0),
+
+	// Top face
+	new VENUS.Vector3(0.0, 1.0, 0.0), new VENUS.Vector3(0.0, 1.0, 0.0), new VENUS.Vector3(0.0, 1.0, 0.0), new VENUS.Vector3(0.0, 1.0, 0.0),
+
+	// Bottom face
+	new VENUS.Vector3(0.0, - 1.0, 0.0), new VENUS.Vector3(0.0, - 1.0, 0.0), new VENUS.Vector3(0.0, - 1.0, 0.0), new VENUS.Vector3(0.0, - 1.0, 0.0),
+
+	// Right face
+	new VENUS.Vector3(1.0, 0.0, 0.0), new VENUS.Vector3(1.0, 0.0, 0.0), new VENUS.Vector3(1.0, 0.0, 0.0), new VENUS.Vector3(1.0, 0.0, 0.0),
+
+	// Left face
+	new VENUS.Vector3( - 1.0, 0.0, 0.0), new VENUS.Vector3( - 1.0, 0.0, 0.0), new VENUS.Vector3( - 1.0, 0.0, 0.0), new VENUS.Vector3( - 1.0, 0.0, 0.0), ];
 
 	cubeMesh = new VENUS.Mesh();
 
 	cubeMesh.setVertices(cubeVertices);
+	cubeMesh.setNormals(cubeNormals);
 	cubeMesh.setIndices(cubeVertexIndices);
 	cubeMesh.setTextureCoords(cubeTextureCoords);
 
@@ -121,28 +140,28 @@ VENUS.Mesh.createCubeMesh = function(lengthOfSize) {
 }
 
 VENUS.Mesh.prototype.setVertices = function(vertices) {
-	VENUS.assert(vertices !== undefined && vertices != null, "setVertices need parameters");
+	SharedUtil.assert(vertices !== undefined && vertices != null, "setVertices need parameters");
 	this._vertices = vertices;
 	this.verticesChanged = true;
 	return this;
 }
 
 VENUS.Mesh.prototype.setIndices = function(indices) {
-	VENUS.assert(indices !== undefined && indices != null, "setIndices need parameters");
+	SharedUtil.assert(indices !== undefined && indices != null, "setIndices need parameters");
 	this._indices = indices;
 	this.indicesChanged = true;
 	return this;
 }
 
 VENUS.Mesh.prototype.setNormals = function(normals) {
-	VENUS.assert(normals !== undefined && normals != null, "setNormals need parameters");
+	SharedUtil.assert(normals !== undefined && normals != null, "setNormals need parameters");
 	this._normals = normals;
 	this.normalsChanged = true;
 	return this;
 }
 
 VENUS.Mesh.prototype.setTextureCoords = function(textureCoords) {
-	VENUS.assert(textureCoords !== undefined && textureCoords != null, "setTextureCoords need parameters");
+	SharedUtil.assert(textureCoords !== undefined && textureCoords != null, "setTextureCoords need parameters");
 	this._textureCoords = textureCoords;
 	this.textureCoordsChanged = true;
 	return this;
@@ -163,3 +182,4 @@ VENUS.Mesh.prototype.getNormals = function() {
 VENUS.Mesh.prototype.getTextureCoords = function() {
 	return this._textureCoords;
 }
+

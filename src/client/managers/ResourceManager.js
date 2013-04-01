@@ -103,7 +103,7 @@ VENUS.ResourceManager.prototype._loadImages = function(imageRawDatas) {
 	var requestImageList = this._requestImagesList;
 	var context = this;
 	for (var key in imageRawDatas) {
-		var imgType = VENUS.FileUtil.getFileExtensionByPath(key);
+		var imgType = FileUtil.getFileExtensionByPath(key);
 		var loaded = false;
 		image = new Image();
 		image.onload = function() {

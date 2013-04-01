@@ -3,6 +3,7 @@ VENUS.SceneNode = function(object) {
 	this._parent = null;
 	this._children = [];
 	this._name = "";
+	this._id = SharedUtil.getUniqueId();
 };
 
 VENUS.SceneNode.prototype.addChild = function(child) {
@@ -34,10 +35,6 @@ VENUS.SceneNode.prototype.getDescendants = function() {
 	var children = this._children;
 	var descendants = [];
 
-	if (children.length == 0) {
-		return descendants;
-	}
-
 	// add children to descendant list
 	for (var i in children) {
 		descendants.push(children[i]);
@@ -65,4 +62,9 @@ VENUS.SceneNode.prototype.setSceneObject = function(obj) {
 VENUS.SceneNode.prototype.isRenderable = function() {
 	var isRenderable = this._sceneObject instanceof VENUS.RenderableObject;
 	return isRenderable;
+}
+
+VENUS.SceneNode.prototype.isLight = function(){
+	var isLight = this._sceneObject instanceof VENUS.Light;
+	return isLight;
 }

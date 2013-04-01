@@ -14,13 +14,3 @@ VENUS.WebGLConfiguration.prototype.setSize = function(width, height){
 VENUS.WebGLConfiguration.prototype.getContext = function(){
 	return this._context;
 };
-
-
-// render the scene
-VENUS.WebGLConfiguration.prototype.renderScene = function() {
-	var gl = this._context;
-
-	gl.clearColor(0.0, 0.0, 0.0, 1.0);
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-	gl.enable(gl.DEPTH_TEST);
-};

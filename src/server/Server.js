@@ -1,5 +1,5 @@
 ServerUtil = module.require("./utils/ServerUtil.js");
-Log = module.require("./Log.js");
+Log = module.require("../share/utils/Log.js");
 SocketsServer = module.require("./SocketsServer.js");
 
 Server = function() {
@@ -57,7 +57,7 @@ Server.prototype._onHttpRequest = function(request, response) {
 			response.writeHead(404);
 			response.end("Page could not found " + pathname);
 
-			Log.debug(pathname + " does not exists");
+			Log.error(pathname + " does not exists");
 		}
 	});
 };

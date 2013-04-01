@@ -10,6 +10,7 @@ VENUS.WebGLConstants.prototype._initialize = function(){
 	this.SHADER_TYPE_VERTEX = gl.VERTEX_SHADER;
 
 	this.UNSIGNED_SHORT = gl.UNSIGNED_SHORT;
+	this.FLOAT = gl.FLOAT;
 	
 	this.STATIC_DRAW = gl.STATIC_DRAW;
 	this.DYNAMIC_DRAW = gl.DYNAMIC_DRAW;

@@ -1,9 +1,11 @@
 VENUS.Material = function() {
 	this._colors = null;
 
-	this._ambientLightCoef = null;
-	this._diffuseLightCoef = null;
-	this._specularLightCoef = null;
+	this._ambientLightCoef = new VENUS.Vector3(1.0, 1.0, 1.0);
+	this._diffuseLightCoef = new VENUS.Vector3(1.0, 1.0, 1.0);
+	this._specularLightCoef = new VENUS.Vector3(1.0, 1.0, 1.0);
+
+	this._shininess = 36;
 
 	this._textures = [];
 
@@ -14,32 +16,45 @@ VENUS.Material = function() {
 };
 
 VENUS.Material.prototype.addTexture = function(texture) {
-	VENUS.assert(texture !== undefined && texture != null, "addTexture need parameters");
+	SharedUtil.assert(texture !== undefined && texture != null, "addTexture need parameters");
 	this._textures.push(texture);
 	this.textureBufferNeedUpdates.push(true);
-}
+};
 
 VENUS.Material.prototype.setColors = function(colors) {
-	VENUS.assert(colors !== undefined && colors != null, "setColors need parameters");
+	SharedUtil.assert(colors !== undefined && colors != null, "setColors need parameters");
 	this._colors = colors;
 	this.colorsChanged = true;
-}
+};
 
 VENUS.Material.prototype.getColors = function() {
 	return this._colors;
-}
+};
+
+VENUS.Material.prototype.getTextures = function() {
+	return this._textures;
+};
 
 VENUS.Material.prototype.setAmbientLigthCoef = function(coef) {
-	VENUS.assert(coef !== undefined && coef != null, "setAmbientLigthCoef need parameters");
+	SharedUtil.assert(coef !== undefined && coef != null, "setAmbientLigthCoef need parameters");
 	this._ambientLightCoef = coef;
-}
+};
 
-VENUS.Material.prototype.setDiffuseLightCoef= function(coef) {
-	VENUS.assert(coef !== undefined && coef != null, "setDiffuseLightCoef need parameters");
-	this._diffuseLightCoef= coef;
-}
+VENUS.Material.prototype.setDiffuseLightCoef = function(coef) {
+	SharedUtil.assert(coef !== undefined && coef != null, "setDiffuseLightCoef need parameters");
+	this._diffuseLightCoef = coef;
+};
 
 VENUS.Material.prototype.setSpecularLightCoef = function(coef) {
-	VENUS.assert(coef !== undefined && coef != null, "setSpecularLightCoef need parameters");
+	SharedUtil.assert(coef !== undefined && coef != null, "setSpecularLightCoef need parameters");
 	this._specularLightCoef = coef;
-}
+};
+
+VENUS.Material.prototype.setShininess = function(shiniess) {
+	this._shininess = shiniess;
+};
+
+VENUS.Material.prototype.getShininess = function() {
+	return this._shininess;
+};
+

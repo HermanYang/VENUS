@@ -1,7 +1,7 @@
-Log = module.require("./Log.js");
+Log = module.require("../share/utils/Log.js");
 Server = module.require("./Server.js");
 ServerUtil = module.require("./utils/ServerUtil.js");
-SocketCommandConstants = module.require("../share/SocketCommandConstants.js");
+SocketCommandConstants = module.require("../share/constants/SocketCommandConstants.js");
 
 var handler = function(socket, request) {
 	serverUtil = new ServerUtil();
@@ -40,7 +40,7 @@ var handler = function(socket, request) {
 				}
 
 				if (data) {
-					Log.debug('Resource loaded. ' + pathname);
+					Log.info('Resource loaded. ' + pathname);
 					resmap[resname] = data;
 				}
 				else {

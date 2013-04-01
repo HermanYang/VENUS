@@ -23,6 +23,7 @@ VENUS.Texture.prototype.bind = function() {
 	var gl = this._context;
 	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, this._textureBuffer);
+
 	return this;
 };
 
@@ -32,6 +33,7 @@ VENUS.Texture.prototype.releaseTexture = function() {
 		gl.deleteTexture(this._textureBuffer);
 		this._textureBuffer = null;
 	}
+
 	return this;
 };
 

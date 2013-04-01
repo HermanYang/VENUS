@@ -1,4 +1,3 @@
-Log = module.require("../Log.js");
 ContentTypeMap = module.require("../ContentTypeMap.js");
 assert = module.require("assert");
 FileUtil = module.require("../../share/utils/FileUtil.js");
