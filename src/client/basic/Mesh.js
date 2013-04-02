@@ -56,7 +56,7 @@ VENUS.Mesh.createMeshFromModel = function(filePath) {
 };
 
 VENUS.Mesh.createCubeMesh = function(lengthOfSize) {
-	var cubeVertices = [
+	var vertices = [
 	// Front face
 	new VENUS.Vector3( - 1.0, - 1.0, 1.0), new VENUS.Vector3(1.0, - 1.0, 1.0), new VENUS.Vector3(1.0, 1.0, 1.0), new VENUS.Vector3( - 1.0, 1.0, 1.0),
 
@@ -77,12 +77,12 @@ VENUS.Mesh.createCubeMesh = function(lengthOfSize) {
 
 	if (lengthOfSize !== undefined) {
 		// apply size factor
-		for (var i = 0; i < cubeVertices.length; i++) {
-			cubeVertices[i].scale(lengthOfSize);
+		for (var i = 0; i < vertices.length; i++) {
+			vertices[i].scale(lengthOfSize);
 		}
 	}
 
-	var cubeVertexIndices = [
+	var indices = [
 	0, 1, 2, 0, 2, 3, // Front face
 	4, 5, 6, 4, 6, 7, // Back face
 	8, 9, 10, 8, 10, 11, // Top face
@@ -91,7 +91,7 @@ VENUS.Mesh.createCubeMesh = function(lengthOfSize) {
 	20, 21, 22, 20, 22, 23 // Left face
 	];
 
-	var cubeTextureCoords = [
+	var textureCoords = [
 	// Front face
 	new VENUS.Vector2(0.0, 0.0), new VENUS.Vector2(1.0, 0.0), new VENUS.Vector2(1.0, 1.0), new VENUS.Vector2(0.0, 1.0),
 
@@ -110,7 +110,7 @@ VENUS.Mesh.createCubeMesh = function(lengthOfSize) {
 	// Left face
 	new VENUS.Vector2(0.0, 0.0), new VENUS.Vector2(1.0, 0.0), new VENUS.Vector2(1.0, 1.0), new VENUS.Vector2(0.0, 1.0)];
 
-	var cubeNormals = [
+	var normals = [
 	// Front face
 	new VENUS.Vector3(0.0, 0.0, 1.0), new VENUS.Vector3(0.0, 0.0, 1.0), new VENUS.Vector3(0.0, 0.0, 1.0), new VENUS.Vector3(0.0, 0.0, 1.0),
 
@@ -129,15 +129,68 @@ VENUS.Mesh.createCubeMesh = function(lengthOfSize) {
 	// Left face
 	new VENUS.Vector3( - 1.0, 0.0, 0.0), new VENUS.Vector3( - 1.0, 0.0, 0.0), new VENUS.Vector3( - 1.0, 0.0, 0.0), new VENUS.Vector3( - 1.0, 0.0, 0.0), ];
 
-	cubeMesh = new VENUS.Mesh();
+	mesh = new VENUS.Mesh();
 
-	cubeMesh.setVertices(cubeVertices);
-	cubeMesh.setNormals(cubeNormals);
-	cubeMesh.setIndices(cubeVertexIndices);
-	cubeMesh.setTextureCoords(cubeTextureCoords);
+	mesh.setVertices(vertices);
+	mesh.setNormals(normals);
+	mesh.setIndices(indices);
+	mesh.setTextureCoords(textureCoords);
 
-	return cubeMesh;
+	return mesh;
 }
+
+VENUS.Mesh.createSphereMesh = function(radius, latitudeBands, longitudeBands) {
+	var vertices = [];
+	var normals = [];
+	var textureCoords = [];
+	var indices = [];
+
+	for (var latNumber = 0; latNumber <= latitudeBands; latNumber++) {
+		var theta = latNumber * Math.PI / latitudeBands;
+		var sinTheta = Math.sin(theta);
+		var cosTheta = Math.cos(theta);
+
+		for (var longNumber = 0; longNumber <= longitudeBands; longNumber++) {
+			var phi = longNumber * 2 * Math.PI / longitudeBands;
+			var sinPhi = Math.sin(phi);
+			var cosPhi = Math.cos(phi);
+
+			var x = cosPhi * sinTheta;
+			var y = cosTheta;
+			var z = sinPhi * sinTheta;
+
+			var u = 1 - (longNumber / longitudeBands);
+			var v = 1 - (latNumber / latitudeBands);
+
+			normals.push(new VENUS.Vector3(x, y, z));
+			textureCoords.push(new VENUS.Vector2(u, v));
+			vertices.push(new VENUS.Vector3(radius * x, radius * y, radius * z));
+		}
+	}
+
+	for (var latNumber = 0; latNumber < latitudeBands; latNumber++) {
+		for (var longNumber = 0; longNumber < longitudeBands; longNumber++) {
+			var first = (latNumber * (longitudeBands + 1)) + longNumber;
+			var second = first + longitudeBands + 1;
+			indices.push(first);
+			indices.push(second);
+			indices.push(first + 1);
+
+			indices.push(second);
+			indices.push(second + 1);
+			indices.push(first + 1);
+		}
+	}
+
+	var mesh = new VENUS.Mesh();
+
+	mesh.setVertices(vertices);
+	mesh.setNormals(normals);
+	mesh.setTextureCoords(textureCoords);
+	mesh.setIndices(indices);
+
+	return mesh;
+};
 
 VENUS.Mesh.prototype.setVertices = function(vertices) {
 	SharedUtil.assert(vertices !== undefined && vertices != null, "setVertices need parameters");

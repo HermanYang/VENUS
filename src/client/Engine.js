@@ -22,7 +22,7 @@ VENUS.Engine.getInstance = function() {
 	return VENUS.Engine._instance;
 }
 
-VENUS.Engine.getWebGLConstants = function(){
+VENUS.Engine.getWebGLConstants = function() {
 	var engine = this.getInstance();
 	return engine._webglConst;
 }
@@ -68,3 +68,13 @@ VENUS.Engine.prototype.setCanvasSize = function(width, height, affactViewPort) {
 		this._webglRenderer.setSize(width, height);
 	}
 }
+
+VENUS.Engine.prototype.run = function() {
+	var context = this;
+	var render = function() {
+		requestAnimationFrame(render);
+		context._sceneManager.renderScene();
+	};
+	render();
+};
+

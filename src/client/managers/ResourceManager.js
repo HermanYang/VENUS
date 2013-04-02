@@ -88,6 +88,8 @@ VENUS.ResourceManager.prototype.getDefaultProgram = function() {
 VENUS.ResourceManager.prototype._initRequestResourceList = function() {
 	// define the images to load
 	this._requestImagesList.push("/images/crate.gif");
+	this._requestImagesList.push("/images/moon.gif");
+	this._requestImagesList.push("/images/ghxp.png");
 
 	// define the meshes to load
 	this._requestModelsList.push("/models/objs/ch_t.obj");
