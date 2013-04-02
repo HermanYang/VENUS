@@ -7,8 +7,6 @@ function goOn() {
 
 	initScene();
 
-	addEventListeners();
-
 	VENUS.Engine.getInstance().run();
 }
 
@@ -18,14 +16,19 @@ function initScene() {
 	sceneManager.setCurrentScene(scene);
 
 	//create camera scene node
-	cameraNode = scene.createPerspectiveCameraSceneNode(45, 0.01, 1000);
+	cameraNode = scene.createFPSCameraSceneNode(45, 0.01, 1000);
 	scene.setCurrentCameraNode(cameraNode);
 
 	// add a cube 
 	var cubeNode = createCubeScnenNode("cube", 5);
-	cubeNode.translate(50 * Math.random(), new VENUS.Vector3(Math.random(), Math.random(), Math.random()));
 	scene.getRootSceneNode().addChild(cubeNode);
-
+	var straightForwardAnimation = new VENUS.StraightForwardAnimation();
+	straightForwardAnimation.setDuration(10000);
+	straightForwardAnimation.setSpeed(0.11);
+	straightForwardAnimation.setDirection(new VENUS.Vector3(0, 0, -1));
+	cubeNode.addAnimation(straightForwardAnimation);
+	cubeNode.startAnimation();
+	
 	// add a model
 	/*var node = scene.createEntitySceneNode("model");
 	var material = node.getSceneObject().getMaterial();
@@ -50,17 +53,13 @@ function initScene() {
 	var directionLightNode = scene.createDirectionLightSceneNode(directionLightAmbientColor, directionLightDiffuseColor, directionLightSpecularColor, direction);
 	scene.getRootSceneNode().addChild(directionLightNode);*/
 
-
-
 	var pointLightAmbientColor = new VENUS.Vector3(0.1, 0.1, 0.1);
 	var pointLightDiffuseColor = new VENUS.Vector3(0.5, 0.5, 0.5);
 	var pointLightSpecularColor = new VENUS.Vector3(0.5, 0.5, 0.5);
 
-	var position = new VENUS.Vector3(-0, 0, 10);
+	var position = new VENUS.Vector3( - 0, 0, 10);
 	var pointLightNode = scene.createPointLightSceneNode(pointLightAmbientColor, pointLightDiffuseColor, pointLightSpecularColor, position);
 	scene.getRootSceneNode().addChild(pointLightNode);
-
-
 
 	/*var spotLightAmbientColor = new VENUS.Vector3(0.1, 0.1, 0.1);
 	var spotLightDiffuseColor = new VENUS.Vector3(0.0, 1.0, 0.0);
@@ -93,7 +92,7 @@ function createCubeScnenNode(name, size) {
 	return cubeNode;
 }
 
-function createSphereSceneNode(name , radius){
+function createSphereSceneNode(name, radius) {
 	// create entity scenen node and initialize it with cube
 	var sceneManager = VENUS.Engine.getInstance().getSceneManager();
 	var scene = sceneManager.getCurrentScene();
@@ -112,26 +111,3 @@ function createSphereSceneNode(name , radius){
 
 	return node;
 };
-
-function addEventListeners() {
-	document.addEventListener("keydown", onKeyDown, false);
-}
-
-function onKeyDown(event) {
-	if (event.keyCode == VENUS.KeyCode.UpArrow) {
-		//	cubeNodeParent.translate(1, new VENUS.Vector3(0, 0, - 1));
-		cameraNode.translate(1, new VENUS.Vector3(0, 0, - 1));
-	}
-	else if (event.keyCode == VENUS.KeyCode.DownArrow) {
-		//cubeNodeParent.translate(1, new VENUS.Vector3(0, 0, 1));
-		cameraNode.translate(1, new VENUS.Vector3(0, 0, 1));
-	}
-	else if (event.keyCode == VENUS.KeyCode.LeftArrow) {
-		// cubeNodeParent.translate(1, new VENUS.Vector3( - 1, 0, 0));
-		cameraNode.translate(1, new VENUS.Vector3( - 1, 0, 0));
-	}
-	else if (event.keyCode == VENUS.KeyCode.RightArrow) {
-		// cubeNodeParent.translate(1, new VENUS.Vector3(1, 0, 0));
-		cameraNode.translate(1, new VENUS.Vector3(1, 0, 0));
-	}
-}

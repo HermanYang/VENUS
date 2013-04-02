@@ -26,6 +26,9 @@ VENUS.MovableSceneNode.prototype.getPosition = function() {
 	return this._position;
 };
 
+/*
+ *direction vector is in the local coordination
+ */
 VENUS.MovableSceneNode.prototype.translate = function(distance, dirVector3) {
 	// do translation
 	dirVector3.normalize();
@@ -45,12 +48,33 @@ VENUS.MovableSceneNode.prototype.rotate = function(degree, axisVector3) {
 
 	// update relativeRotationMatrix
 	this._relativeRotationMatrix.rotate(rad, axisVector3);
-	return this;
+}
+
+VENUS.MovableSceneNode.prototype.rotateX = function(degree) {
+	// do rotation
+	var rad = VENUS.Math.degreeToRadian(degree);
+	this._relativeTransformMatrix.rotateX(rad);
+
+	// update relativeRotationMatrix
+	this._relativeRotationMatrix.rotateX(rad);
 }
 
 VENUS.MovableSceneNode.prototype.rotateY = function(degree) {
-	this.rotate(degree, new VENUS.Vector3(0, 1, 0));
-	return this;
+	// do rotation
+	var rad = VENUS.Math.degreeToRadian(degree);
+	this._relativeTransformMatrix.rotateY(rad);
+
+	// update relativeRotationMatrix
+	this._relativeRotationMatrix.rotateY(rad);
+}
+
+VENUS.MovableSceneNode.prototype.rotateZ = function(degree) {
+	// do rotation
+	var rad = VENUS.Math.degreeToRadian(degree);
+	this._relativeTransformMatrix.rotateZ(rad);
+
+	// update relativeRotationMatrix
+	this._relativeRotationMatrix.rotateZ(rad);
 }
 
 // get the finnal transform matrix
@@ -75,10 +99,18 @@ VENUS.MovableSceneNode.prototype.getTransformMatrix = function() {
 
 VENUS.MovableSceneNode.prototype.addAnimation = function(animation) {
 	this._animationList.push(animation);
+	animation.setAnimationRole(this);
 };
 
-VENUS.MovableSceneNode.prototype.animate = function() {
+VENUS.MovableSceneNode.prototype._animate = function() {
 	for (var i = 0; i < this._animationList.length; ++i) {
 		this._animationList[i].animate();
 	}
-}; 
+};
+
+VENUS.MovableSceneNode.prototype.startAnimation = function() {
+	for (var i = 0; i < this._animationList.length; ++i) {
+		this._animationList[i].start();
+	}
+};
+

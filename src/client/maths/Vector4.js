@@ -2,7 +2,7 @@ VENUS.Vector4 = function(x, y, z, w) {
 	this._elements = vec4.fromValues(x, y, z, w);
 };
 
-VENUS.Vector4.prototype.setElements = function(x, y, z, w) {
+VENUS.Vector4.prototype.setValue = function(x, y, z, w) {
 	vec4.set(this._elements, x, y, z, w);
 	return this;
 };

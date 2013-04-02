@@ -7,31 +7,29 @@ VENUS.Vector2.prototype.copy = function(vector2) {
 	return this;
 }
 
-VENUS.Vector2.prototype.getElements = function(){
+VENUS.Vector2.prototype.getElements = function() {
 	return this._elements;
 };
 
 VENUS.Vector2.prototype.setValue = function(x, y) {
 	vec2.set(this._elements, x, y);
-	return this;
 }
 
-VENUS.Vector2.prototype.getX = function(){
+VENUS.Vector2.prototype.getX = function() {
 	return this._elements[0];
 };
 
-VENUS.Vector2.prototype.getY = function(){
+VENUS.Vector2.prototype.getY = function() {
 	return this._elements[1];
 };
 
 VENUS.Vector2.prototype.add = function(vector2) {
-	vec2.add(this._elements, this._elements, vector2.elements);
+	vec2.add(this._elements, this._elements, vector2._elements);
 	return this;
 }
 
 VENUS.Vector2.prototype.subtract = function(vector2) {
-	vec2.subtract(this._elements, this._elements, vector2.elements);
-	return this;
+	vec2.subtract(this._elements, this._elements, vector2._elements);
 }
 
 VENUS.Vector2.prototype.scale = function(num) {
@@ -40,7 +38,7 @@ VENUS.Vector2.prototype.scale = function(num) {
 }
 
 VENUS.Vector2.prototype.distance = function(vector2) {
-	return vec2.distance(this._elements, vector2.elements);
+	return vec2.distance(this._elements, vector2._elements);
 }
 
 VENUS.Vector2.prototype.length = function() {
@@ -52,24 +50,22 @@ VENUS.Vector2.prototype.negate = function() {
 	return this;
 }
 
-VENUS.Vector2.prototype.normalize = function(){
+VENUS.Vector2.prototype.normalize = function() {
 	vec2.normalize(this._elements, this._elements);
 	return this;
 }
 
-VENUS.Vector2.prototype.dot = function(vector2){
-	vec2.dot(this._elements, vector2.elements);
+VENUS.Vector2.prototype.dot = function(vector2) {
+	vec2.dot(this._elements, vector2._elements);
 	return this;
 }
 
-VENUS.Vector2.prototype.cross = function(vector2){
-	vec2.cross(this._elements, vector2.elements);
+VENUS.Vector2.prototype.cross = function(vector2) {
+	vec2.cross(this._elements, vector2._elements);
 	return this;
 }
 
-
-
-VENUS.Vector2.prototype.toString = function(){
+VENUS.Vector2.prototype.toString = function() {
 	return vec2.str(this._elements);
 }
 

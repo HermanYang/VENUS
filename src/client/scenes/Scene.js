@@ -75,6 +75,13 @@ VENUS.Scene.prototype.createEntitySceneNode = function(name) {
 	return node;
 }
 
+VENUS.Scene.prototype.createFPSCameraSceneNode = function(fovyDegree, near, far, name){
+	var node = this.createPerspectiveCameraSceneNode(fovyDegree, near, far, name);
+	var fpsCameraAnimation = new VENUS.FPSCameraAnimation();
+	node.addAnimation(fpsCameraAnimation);
+	return node;
+};
+
 VENUS.Scene.prototype.createDirectionLightSceneNode = function(ambientColorVector3, diffuseColorVector3, specularColorVector3, directionVector3) {
 	var directionLight = new VENUS.DirectionLight();
 

@@ -6,11 +6,11 @@ VENUS.Vector3.prototype.clone = function(vector3) {
 	this._elements = vec3.clone(vector3.getElements());
 }
 
-VENUS.Vector3.prototype.setElements = function(x, y, z) {
+VENUS.Vector3.prototype.setValue = function(x, y, z) {
 	vec3.set(this._elements, x, y, z);
 }
 
-VENUS.Vector3.prototype.getElements = function(){
+VENUS.Vector3.prototype.getElements = function() {
 	return this._elements;
 };
 
@@ -18,15 +18,15 @@ VENUS.Vector3.prototype.add = function(vector3) {
 	vec3.add(this._elements, this._elements, vector3.getElements());
 }
 
-VENUS.Vector3.prototype.getX = function(){
+VENUS.Vector3.prototype.getX = function() {
 	return this._elements[0];
 };
 
-VENUS.Vector3.prototype.getY = function(){
+VENUS.Vector3.prototype.getY = function() {
 	return this._elements[1];
 };
 
-VENUS.Vector3.prototype.getZ = function(){
+VENUS.Vector3.prototype.getZ = function() {
 	return this._elements[2];
 };
 
@@ -85,3 +85,4 @@ VENUS.Vector3.prototype.applyMatrix = function(matrix44) {
 VENUS.Vector3.prototype.toString = function() {
 	return vec3.str(this._elements);
 }
+
