@@ -13,38 +13,45 @@ function goOn() {
 function initScene() {
 	var sceneManager = VENUS.Engine.getInstance().getSceneManager();
 	var scene = sceneManager.createScene("basic");
+	var webglConst = VENUS.Engine.getWebGLConstants();
 	sceneManager.setCurrentScene(scene);
 
 	//create camera scene node
 	cameraNode = scene.createFPSCameraSceneNode(45, 0.01, 1000);
 	scene.setCurrentCameraNode(cameraNode);
 
-	// add a cube 
-	var cubeNode = createCubeScnenNode("cube", 5);
-	scene.getRootSceneNode().addChild(cubeNode);
-	var straightForwardAnimation = new VENUS.StraightForwardAnimation();
-	straightForwardAnimation.setDuration(10000);
-	straightForwardAnimation.setSpeed(0.11);
-	straightForwardAnimation.setDirection(new VENUS.Vector3(0, 0, -1));
-	cubeNode.addAnimation(straightForwardAnimation);
-	cubeNode.startAnimation();
-	
+	//add a cube 
+	/*var cubeNode = createCubeScnenNode("cube", 5);
+	scene.getRootSceneNode().addChild(cubeNode);*/
+
+	var resManager = VENUS.Engine.getInstance().getResourceManager();
+	var px = resManager.getImageByPath("/images/skybox/px.jpg");
+	var nx = resManager.getImageByPath("/images/skybox/nx.jpg");
+	var py = resManager.getImageByPath("/images/skybox/py.jpg");
+	var ny = resManager.getImageByPath("/images/skybox/ny.jpg");
+	var pz = resManager.getImageByPath("/images/skybox/pz.jpg");
+	var nz = resManager.getImageByPath("/images/skybox/nz.jpg");
+
 	// add a model
-	/*var node = scene.createEntitySceneNode("model");
+	var node = scene.createEntitySceneNode("model");
 	var material = node.getSceneObject().getMaterial();
 	node.getSceneObject().setMesh(VENUS.Mesh.createMeshFromModel("/models/objs/macbook.obj"));
 	var texture = new VENUS.Texture();
-	var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/crate.gif");
-	texture.createTexture(image);
-	material.addTexture(texture);
-	scene.getRootSceneNode().addChild(node);*/
+	var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/ghxp.png");
+	texture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image); 
+	material.set2DTexture(texture);
+	scene.getRootSceneNode().addChild(node);
 
 	// add a sphere
 	var sphereNode = createSphereSceneNode("sphere", 3);
-	sphereNode.translate(50 * Math.random(), new VENUS.Vector3(Math.random(), 0, Math.random()));
+	sphereNode.translate(20 * Math.random(), new VENUS.Vector3(Math.random(), 0, Math.random()));
 	scene.getRootSceneNode().addChild(sphereNode);
 
+	var skyboxNode = scene.createSkyBoxSceneNode("skybox", 500, px, nx, py, ny, pz, nz);
+	scene.getRootSceneNode().addChild(skyboxNode);
+
 	// add lights
+	// direction light
 	/*var directionLightAmbientColor = new VENUS.Vector3(1.1, 1.1, 1.1);
 	var directionLightDiffuseColor = new VENUS.Vector3(0.0, 0.0, 0.0);
 	var directionLightSpecularColor = new VENUS.Vector3(0.0, 0.0, 0.0);
@@ -53,14 +60,16 @@ function initScene() {
 	var directionLightNode = scene.createDirectionLightSceneNode(directionLightAmbientColor, directionLightDiffuseColor, directionLightSpecularColor, direction);
 	scene.getRootSceneNode().addChild(directionLightNode);*/
 
-	var pointLightAmbientColor = new VENUS.Vector3(0.1, 0.1, 0.1);
-	var pointLightDiffuseColor = new VENUS.Vector3(0.5, 0.5, 0.5);
-	var pointLightSpecularColor = new VENUS.Vector3(0.5, 0.5, 0.5);
+	// point lights
+	var pointLightAmbientColor = new VENUS.Vector3(0.4, 0.4, 0.4);
+	var pointLightDiffuseColor = new VENUS.Vector3(0.8, 0.8, 0.8);
+	var pointLightSpecularColor = new VENUS.Vector3(0.1, 0.1, 0.1);
 
-	var position = new VENUS.Vector3( - 0, 0, 10);
+	var position = new VENUS.Vector3(0, 0, 0);
 	var pointLightNode = scene.createPointLightSceneNode(pointLightAmbientColor, pointLightDiffuseColor, pointLightSpecularColor, position);
 	scene.getRootSceneNode().addChild(pointLightNode);
 
+	// spot lights
 	/*var spotLightAmbientColor = new VENUS.Vector3(0.1, 0.1, 0.1);
 	var spotLightDiffuseColor = new VENUS.Vector3(0.0, 1.0, 0.0);
 	var spotLightSpecularColor = new VENUS.Vector3(0.0, 0.0, 1.0);
@@ -76,6 +85,7 @@ function createCubeScnenNode(name, size) {
 	// create entity scenen node and initialize it with cube
 	var sceneManager = VENUS.Engine.getInstance().getSceneManager();
 	var scene = sceneManager.getCurrentScene();
+	var webglConst = VENUS.Engine.getWebGLConstants();
 
 	var cubeNode = scene.createEntitySceneNode(name);
 
@@ -85,9 +95,10 @@ function createCubeScnenNode(name, size) {
 
 	var cubeTexture = new VENUS.Texture();
 	image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/ghxp.png");
-	cubeTexture.createTexture(image);
 
-	cubeMaterial.addTexture(cubeTexture);
+	cubeTexture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image); 
+
+	cubeMaterial.set2DTexture(cubeTexture);
 
 	return cubeNode;
 }
@@ -96,6 +107,7 @@ function createSphereSceneNode(name, radius) {
 	// create entity scenen node and initialize it with cube
 	var sceneManager = VENUS.Engine.getInstance().getSceneManager();
 	var scene = sceneManager.getCurrentScene();
+	var webglConst = VENUS.Engine.getWebGLConstants();
 
 	var node = scene.createEntitySceneNode(name);
 
@@ -105,9 +117,10 @@ function createSphereSceneNode(name, radius) {
 
 	var texture = new VENUS.Texture();
 	image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/moon.gif");
-	texture.createTexture(image);
+	texture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image);
 
-	material.addTexture(texture);
+	material.set2DTexture(texture);
 
 	return node;
 };
+

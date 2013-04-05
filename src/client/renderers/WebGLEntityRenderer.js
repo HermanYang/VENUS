@@ -12,7 +12,6 @@ VENUS.WebGLEntityRenderer = function(entity) {
 	this._normalBuffer = new VENUS.ArrayBuffer();
 	this._colorBuffer = new VENUS.ArrayBuffer();
 	this._textureCoordBuffer = new VENUS.ArrayBuffer();
-
 };
 
 VENUS.WebGLEntityRenderer.prototype = Object.create(VENUS.WebGLRenderer);
@@ -70,16 +69,6 @@ VENUS.WebGLEntityRenderer.prototype._updateBuffers = function() {
 	}
 };
 
-VENUS.WebGLEntityRenderer.prototype.activeTextures = function() {
-	var entity = this._renderableObject;
-	var textures = entity.getMaterial().getTextures();
-
-	for (var i in textures) {
-		var texture = textures[i];
-		texture.bind();
-	}
-};
-
 /*
  *Do shader program initialization according to the material and other infomations
  */
@@ -97,13 +86,15 @@ VENUS.WebGLEntityRenderer.prototype._setupShaderProgram = function(projectionMat
 	normalMatrix.invert();
 	normalMatrix.transpose();
 
+	this._setupTextures();
+
 	this._setupLights();
 
 	program.setUniformMatrix44("uViewMatrix", viewMatrix);
 	program.setUniformMatrix44("uModelViewMatrix", modelViewMatrix);
 	program.setUniformMatrix44("uProjectionMatrix", projectionMatrix);
 	program.setUniformMatrix44("uNormalMatrix", normalMatrix);
-	program.setUniformInt("uSampler", 0);
+
 	program.setUniformFloat("uMaterialShininess", shiniess);
 
 	this._vertexBuffer.bindDefaultProgramAttribute("aVertex", 0, 0);
@@ -121,9 +112,29 @@ VENUS.WebGLEntityRenderer.prototype.render = function(projectionMatrix, viewMatr
 
 	this._setupShaderProgram(projectionMatrix, viewMatrix, modelMatrix);
 
-	this.activeTextures();
-
 	this._indexBuffer.drawElements(cons.TRIANGLES);
+};
+
+VENUS.WebGLEntityRenderer.prototype._setupTextures = function() {
+	var webglConst = VENUS.Engine.getWebGLConstants();
+	var program = this._program;
+	var entity = this._renderableObject;
+	var material = entity.getMaterial();
+	var texture2D = material.get2DTexture();
+	var textureCubeMap = material.getCubeMapTexture();
+
+	var TEXTURE_2D = 0;
+	var TEXTURE_CUBE_MAP = 1;
+
+	if (texture2D !== null) {
+		program.setTexture("u2DTextureSampler", texture2D, webglConst.LINEAR, webglConst.LINEAR, webglConst.CLAMP_TO_EDGE, webglConst.CLAMP_TO_EDGE);
+		program.setUniformInt("uTextureMode", TEXTURE_2D);
+	}
+	else if (textureCubeMap !== null) {
+		program.setTexture("uCubeTextureSampler", textureCubeMap, webglConst.LINEAR, webglConst.LINEAR, webglConst.CLAMP_TO_EDGE, webglConst.CLAMP_TO_EDGE);
+		program.setUniformInt("uTextureMode", TEXTURE_CUBE_MAP);
+	}
+
 };
 
 VENUS.WebGLEntityRenderer.prototype._setupLights = function() {
@@ -239,3 +250,4 @@ VENUS.WebGLEntityRenderer.prototype._setupSpotLights = function(spotLightNodes) 
 		program.setUniformFloatArray("uSpotLightCosCutoffs", cutoffs);
 	}
 };
+

@@ -3,6 +3,7 @@ VENUS.Program = function() {
 	this._shaderProgram = null;
 	this._fragShader = null;
 	this._vertexShader = null;
+	this._availableTextureIndex = 2;
 
 };
 
@@ -33,6 +34,7 @@ VENUS.Program.prototype.bind = function() {
 	if (!gl.getProgramParameter(this._shaderProgram, gl.LINK_STATUS)) {
 		alert("Could not initialise shaders");
 	}
+
 	gl.useProgram(this._shaderProgram);
 };
 
@@ -66,22 +68,6 @@ VENUS.Program.prototype.setUniformMatrix44 = function(paramName, value) {
 	gl.uniformMatrix4fv(address, false, value.getElements());
 };
 
-VENUS.Program.prototype.setUniformMatrix44Array = function(paramName, value) {
-	var gl = this._context;
-	var address = gl.getUniformLocation(this._shaderProgram, paramName);
-	var size = value.length * 16;
-	matrixs = new VENUS.FLOAT_ARRAY(size);
-	for (var i = 0; i < value.length; ++i) {
-		var elements = value[i].getElements();
-		for (var j = 0; j < elements.length; ++j) {
-			var index = i * 16 + j;
-			matrixs[index] = elements[j];
-		}
-	}
-
-	gl.uniformMatrix4fv(address, false, matrixs);
-};
-
 VENUS.Program.prototype.setUniformInt = function(paramName, value) {
 	var gl = this._context;
 	var address = gl.getUniformLocation(this._shaderProgram, paramName);
@@ -92,8 +78,8 @@ VENUS.Program.prototype.setUniformInt = function(paramName, value) {
 VENUS.Program.prototype.setUniformIntArray = function(paramName, value) {
 	var gl = this._context;
 	var address = gl.getUniformLocation(this._shaderProgram, paramName);
-	gl.uniform1iv(address, value);
 
+	gl.uniform1iv(address, value);
 };
 
 VENUS.Program.prototype.setUniformFloat = function(paramName, value) {
@@ -130,13 +116,22 @@ VENUS.Program.prototype.setUniformVector3Array = function(paramName, vector3Arra
 
 VENUS.Program.prototype.setUniformVector4 = function(paramName, vector4) {};
 
-VENUS.Program.prototype.setSampler = function(paramName, value) {};
+VENUS.Program.prototype.setSampler = function(paramName, value) {
+	this.setUniformInt(paramName, value);
+};
 
-VENUS.Program.prototype.setSamplerArray = function(paramName, value) {};
+VENUS.Program.prototype.setTexture = function(paramName, texture, minFilterEnum, magFilterEnum, wrapInS, wrapInT) {
+	var gl = this._context;
+	var address = gl.getUniformLocation(this._shaderProgram, paramName);
+	if (texture !== null) {
+		texture.setMinFilter(minFilterEnum);
+		texture.setMagFilter(magFilterEnum);
+		texture.setWraps(wrapInS, wrapInT);
 
-VENUS.Program.prototype.setTexture = function(paramName, texture) {};
-
-VENUS.Program.prototype.setTextureArray = function(paramName, textures) {};
+		gl.uniform1i(address, texture.getIndex());
+		texture.bind();
+	}
+};
 
 VENUS.Program.prototype.getLog = function() {
 	var gl = this._context;

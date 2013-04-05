@@ -14,7 +14,7 @@ VENUS.Scene.prototype.getSceneNodeById = function() {}
 
 VENUS.Scene.prototype.render = function() {
 	var gl = VENUS.Engine.getInstance().getWebGLConfiguration().getContext();
-	var cameraNode = this.getCurrentCameraNode();
+	var cameraNode = this.getCurrentCameraSceneNode();
 	var viewMatrix = new VENUS.Matrix44(cameraNode.getViewMatrix());
 	var projectionMatrix = cameraNode.getProjectionMatrix();
 	var sceneList = this._root.getDescendants();
@@ -32,7 +32,7 @@ VENUS.Scene.prototype.render = function() {
 
 }
 
-VENUS.Scene.prototype.getCurrentCameraNode = function() {
+VENUS.Scene.prototype.getCurrentCameraSceneNode = function() {
 	return this._currentCameraNode;
 }
 
@@ -75,10 +75,37 @@ VENUS.Scene.prototype.createEntitySceneNode = function(name) {
 	return node;
 }
 
-VENUS.Scene.prototype.createFPSCameraSceneNode = function(fovyDegree, near, far, name){
+VENUS.Scene.prototype.createSkyBoxSceneNode = function(name, size, imagePX, imageNX, imagePY, imageNY, imagePZ, imageNZ) {
+	var entity = new VENUS.Entity();
+	var webglConst = VENUS.Engine.getWebGLConstants();
+	entity.setMesh(VENUS.Mesh.createCubeMesh(size));
+
+	var cubeMaterial = entity.getMaterial();
+	var cubeTexture = new VENUS.Texture();
+
+	cubeTexture.createTexture(webglConst.TEXTURE_CUBE_MAP, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, imagePX, imageNX, imagePY, imageNY, imagePZ, imageNZ);
+	cubeMaterial.setCubeMapTexture(cubeTexture);
+
+	var node = new VENUS.SkyBoxSceneNode(entity);
+
+	if (name !== undefined) {
+		node.setName(name);
+	}
+
+	// add scene node to list in order to manage them 
+	this._sceneNodeList.push(node);
+
+	return node;
+};
+
+VENUS.Scene.prototype.createFPSCameraSceneNode = function(fovyDegree, near, far, name) {
 	var node = this.createPerspectiveCameraSceneNode(fovyDegree, near, far, name);
 	var fpsCameraAnimation = new VENUS.FPSCameraAnimation();
 	node.addAnimation(fpsCameraAnimation);
+
+	// add scene node to list in order to manage them 
+	this._sceneNodeList.push(node);
+
 	return node;
 };
 
@@ -93,6 +120,9 @@ VENUS.Scene.prototype.createDirectionLightSceneNode = function(ambientColorVecto
 
 	var node = new VENUS.LightSceneNode(directionLight);
 
+	// add scene node to list in order to manage them 
+	this._sceneNodeList.push(node);
+
 	return node;
 };
 
@@ -105,6 +135,10 @@ VENUS.Scene.prototype.createPointLightSceneNode = function(ambientColorVector3, 
 
 	var node = new VENUS.LightSceneNode(pointLight);
 	node.setPosition(positionVector3);
+
+	// add scene node to list in order to manage them 
+	this._sceneNodeList.push(node);
+
 	return node;
 };
 
@@ -119,6 +153,10 @@ VENUS.Scene.prototype.createSpotLightSceneNode = function(ambientColorVector3, d
 
 	var node = new VENUS.LightSceneNode(spotLight);
 	node.setPosition(positionVector3);
+
+	// add scene node to list in order to manage them 
+	this._sceneNodeList.push(node);
+
 	return node;
 };
 

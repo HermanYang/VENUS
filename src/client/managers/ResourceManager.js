@@ -91,6 +91,13 @@ VENUS.ResourceManager.prototype._initRequestResourceList = function() {
 	this._requestImagesList.push("/images/moon.gif");
 	this._requestImagesList.push("/images/ghxp.png");
 
+	this._requestImagesList.push("/images/skybox/px.jpg");
+	this._requestImagesList.push("/images/skybox/nx.jpg");
+	this._requestImagesList.push("/images/skybox/py.jpg");
+	this._requestImagesList.push("/images/skybox/ny.jpg");
+	this._requestImagesList.push("/images/skybox/pz.jpg");
+	this._requestImagesList.push("/images/skybox/nz.jpg");
+
 	// define the meshes to load
 	this._requestModelsList.push("/models/objs/ch_t.obj");
 	this._requestModelsList.push("/models/objs/macbook.obj");
@@ -137,8 +144,8 @@ VENUS.ResourceManager.prototype._isResourcesLoaded = function() {
 VENUS.ResourceManager.prototype._initDefaultShaderProgram = function() {
 	var webglConst = VENUS.Engine.getWebGLConstants();
 
-	var vertexShader = new VENUS.Shader(webglConst.SHADER_TYPE_VERTEX);
-	var fragShader = new VENUS.Shader(webglConst.SHADER_TYPE_FRAGMENT);
+	var vertexShader = new VENUS.Shader(webglConst.VERTEX_SHADER);
+	var fragShader = new VENUS.Shader(webglConst.FRAGMENT_SHADER);
 
 	this._defaultShaderProgram = new VENUS.Program();
 

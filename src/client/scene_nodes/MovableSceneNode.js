@@ -38,7 +38,6 @@ VENUS.MovableSceneNode.prototype.translate = function(distance, dirVector3) {
 	// update position
 	dirVector3.scale(distance);
 	this._position.add(dirVector3);
-	return this;
 }
 
 VENUS.MovableSceneNode.prototype.rotate = function(degree, axisVector3) {

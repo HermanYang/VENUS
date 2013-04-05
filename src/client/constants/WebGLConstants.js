@@ -3,21 +3,70 @@ VENUS.WebGLConstants = function(context) {
 	this._initialize();
 };
 
-VENUS.WebGLConstants.prototype._initialize = function(){
+VENUS.WebGLConstants.prototype._initialize = function() {
 	var gl = this._context;
 
-	this.SHADER_TYPE_FRAGMENT = gl.FRAGMENT_SHADER;
-	this.SHADER_TYPE_VERTEX = gl.VERTEX_SHADER;
+	// Shader
+	this.FRAGMENT_SHADER = gl.FRAGMENT_SHADER;
+	this.VERTEX_SHADER = gl.VERTEX_SHADER;
 
+	// Data type
 	this.UNSIGNED_SHORT = gl.UNSIGNED_SHORT;
+	this.UNSIGNED_INT = gl.UNSIGNED_INT;
+	this.BYTE = gl.BYTE;
 	this.FLOAT = gl.FLOAT;
-	
+	this.INT = gl.INT;
+	this.SHORT = gl.SHORT;
+	this.UNSIGNED_BYTE = gl.UNSIGNED_BYTE;
+
 	this.STATIC_DRAW = gl.STATIC_DRAW;
 	this.DYNAMIC_DRAW = gl.DYNAMIC_DRAW;
 	this.STREAM_DRAW = gl.STREAM_DRAW;
-	
+
 	this.ARRAY_BUFFER = gl.ARRAY_BUFFER;
 	this.ELEMENT_ARRAY_BUFFER = gl.ELEMENT_ARRAY_BUFFER;
 
 	this.TRIANGLES = gl.TRIANGLES;
+
+	// Texture
+	this.TEXTURE_2D = gl.TEXTURE_2D;
+	this.TEXTURE_CUBE_MAP = gl.TEXTURE_CUBE_MAP;
+	this.TEXTURE_CUBE_MAP_POSITIVE_X = gl.TEXTURE_CUBE_MAP_POSITIVE_X;
+	this.TEXTURE_CUBE_MAP_NEGATIVE_X = gl.TEXTURE_CUBE_MAP_NEGATIVE_X;
+	this.TEXTURE_CUBE_MAP_POSITIVE_Y = gl.TEXTURE_CUBE_MAP_POSITIVE_Y;
+	this.TEXTURE_CUBE_MAP_NEGATIVE_Y = gl.TEXTURE_CUBE_MAP_NEGATIVE_Y;
+	this.TEXTURE_CUBE_MAP_POSITIVE_Z = gl.TEXTURE_CUBE_MAP_POSITIVE_Z;
+	this.TEXTURE_CUBE_MAP_NEGATIVE_Z = gl.TEXTURE_CUBE_MAP_NEGATIVE_Z;
+
+	// Texture min filter
+	this.NEAREST = gl.NEAREST;
+	this.LINEAR = gl.LINEAR;
+	this.NEAREST_MIPMAP_NEAREST = gl.NEAREST_MIPMAP_NEAREST;
+	this.NEAREST_MIPMAP_LINEAR = gl.NEAREST_MIPMAP_LINEAR;
+	this.LINEAR_MIPMAP_NEAREST = gl.LINEAR_MIPMAP_NEAREST;
+	this.LINEAR_MIPMAP_LINEAR = gl.LINEAR_MIPMAP_LINEAR;
+
+	// Texture mag filter
+	this.NEAREST = gl.NEAREST;
+	this.LINEAR = gl.LINEAR;
+
+	// Texture wraps in s or t:
+	this.CLAMP_TO_EDGE = gl.CLAMP_TO_EDGE;
+	this.REPEAT = gl.REPEAT;
+	this.MIRRORED_REPEAT = gl.MIRRORED_REPEAT;
+
+	// Pixel Format 
+	this.DEPTH_COMPONENT = gl.DEPTH_COMPONENT;
+	this.RGB = gl.RGB;
+	this.RGBA = gl.RGBA;
+	this.ALPHA = gl.ALPHA;
+	this.LUMINANCE = gl.LUMINANCE;
+	this.LUMINANCE_ALPHA = gl.LUMINANCE_ALPHA;
+
+	// Pixel type
+	this.UNSIGNED_SHORT_4_4_4_4 = gl.UNSIGNED_SHORT_4_4_4_4;
+	this.UNSIGNED_SHORT_5_5_5_1 = gl.UNSIGNED_SHORT_5_5_5_1;
+	this.UNSIGNED_SHORT_5_6_5 = gl.UNSIGNED_SHORT_5_6_5;
+
 };
+

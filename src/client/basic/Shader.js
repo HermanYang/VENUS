@@ -12,11 +12,11 @@ VENUS.Shader.prototype.compile = function() {
 	var webglConst = VENUS.Engine.getWebGLConstants();
 
 	this.releaseShader();
-	
-	if (type === webglConst.SHADER_TYPE_FRAGMENT) {
+
+	if (type === webglConst.FRAGMENT_SHADER) {
 		this._shader = gl.createShader(gl.FRAGMENT_SHADER);
 	}
-	else if (type === webglConst.SHADER_TYPE_VERTEX) {
+	else if (type === webglConst.VERTEX_SHADER) {
 		this._shader = gl.createShader(gl.VERTEX_SHADER);
 	}
 	else {
@@ -28,7 +28,7 @@ VENUS.Shader.prototype.compile = function() {
 	gl.shaderSource(this._shader, this._sourceCode);
 	gl.compileShader(this._shader);
 
-	SharedUtil.assert(gl.getShaderParameter(this._shader, gl.COMPILE_STATUS),  gl.getShaderInfoLog(this._shader));
+	SharedUtil.assert(gl.getShaderParameter(this._shader, gl.COMPILE_STATUS), gl.getShaderInfoLog(this._shader));
 
 };
 
@@ -37,15 +37,16 @@ VENUS.Shader.prototype.setShaderSourceCode = function(code) {
 	this._sourceCode = code;
 };
 
-VENUS.Shader.prototype.getShader = function(){
+VENUS.Shader.prototype.getShader = function() {
 	return this._shader;
 };
 
-VENUS.Shader.prototype.releaseShader = function(){
+VENUS.Shader.prototype.releaseShader = function() {
 	var gl = this._context;
 
-	if( this._shader !== null){
+	if (this._shader !== null) {
 		gl.deleteShader(this._shader);
 		this._shader = null;
 	}
 };
+

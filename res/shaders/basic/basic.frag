@@ -1,11 +1,18 @@
 precision mediump float;
 
 varying vec2 vTextureCoord;
+varying vec3 vCubeMapTextureCoord;
 varying vec4 vVertex;
 varying vec3 vTransformedNormal;
 varying mat4 vModelViewMatrix;
 
+// material attributes
+uniform float uMaterialShininess;
+
 uniform mat4 uViewMatrix;
+uniform sampler2D u2DTextureSampler;
+uniform samplerCube uCubeTextureSampler;
+uniform int uTextureMode;
 
 // Direction lights attributes
 const int MAX_DIRECTION_LIGHT_AMOUNT = 10;
@@ -36,10 +43,9 @@ uniform vec3 uSpotLightAmbientColors[MAX_POINTL_LIGHT_AMOUNT];
 uniform vec3 uSpotLightDiffuseColors[MAX_SPOT_LIGHT_AMOUNT];
 uniform vec3 uSpotLightSpecularColors[MAX_SPOT_LIGHT_AMOUNT];
 
-// material attributes
-uniform float uMaterialShininess;
-
-uniform sampler2D uSampler;
+// Texture mode
+const int TEXTURE_2D = 0;
+const int TEXTURE_CUBE_MAP = 1;
 
 void applyDirectionLights( const in vec3 normal, const in vec3 vertexPosition, const in float materialShininess, inout vec3 ambientColor, inout vec3 diffuseColor, inout vec3 specularColor){
 	float diffuseFactor = 0.0;
@@ -132,6 +138,8 @@ void main(void) {
 	vec3 ambientColor = vec3(0.0, 0.0, 0.0);
 	vec3 lightColor = vec3(0.0, 0.0, 0.0);
 
+	vec4 textureColor = vec4(0.0, 0.0, 0.0, 0.0);
+
 	applyDirectionLights(vTransformedNormal, vVertex.xyz, uMaterialShininess, ambientColor, diffuseColor, specularColor);
 
 	applyPointLights(vTransformedNormal, vVertex.xyz, uMaterialShininess, ambientColor, diffuseColor, specularColor);
@@ -140,12 +148,13 @@ void main(void) {
 
 	lightColor = ambientColor + diffuseColor + specularColor;
 
-	vec4 textureColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+	if(uTextureMode == TEXTURE_2D){
+		textureColor = texture2D(u2DTextureSampler, vTextureCoord);
+	}
+
+	if(uTextureMode == TEXTURE_CUBE_MAP){
+		textureColor = textureCube(uCubeTextureSampler, vCubeMapTextureCoord);
+	}
 
 	gl_FragColor = vec4(textureColor.rgb * lightColor, textureColor.a);
-
-	/*if(length(lightColor) == 0.0){
-		gl_FragColor = vec4(1, 1, 1, 1);
-	}*/
-
 }
