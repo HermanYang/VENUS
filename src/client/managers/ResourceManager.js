@@ -4,14 +4,12 @@ VENUS.ResourceManager = function() {
 	this._images = {};
 	this._models = {};
 	this._shaders = {};
-
 	this._models = {};
+	this._programs = {};
 
 	this._requestImagesList = [];
 	this._requestModelsList = [];
 	this._requestShadersList = [];
-
-	this._defaultShaderProgram = null;
 
 	this._initRequestResourceList();
 
@@ -53,7 +51,6 @@ VENUS.ResourceManager.prototype.loadResources = function(callback) {
 			}
 
 		}
-		context._initDefaultShaderProgram();
 
 		var intervalId = setInterval((function(self) {
 			return function() {
@@ -82,7 +79,36 @@ VENUS.ResourceManager.prototype.getShaderByPath = function(path) {
 };
 
 VENUS.ResourceManager.prototype.getDefaultProgram = function() {
-	return this._defaultShaderProgram;
+	return this.getProgramByPath("/shaders/basic");
+};
+
+VENUS.ResourceManager.prototype.getProgramByPath = function(path) {
+	if (this._programs.hasOwnProperty(path)) {
+		return this._programs[path];
+	}
+
+	var webglConst = VENUS.Engine.getWebGLConstants();
+
+	var vertexShader = new VENUS.Shader(webglConst.VERTEX_SHADER);
+	var fragShader = new VENUS.Shader(webglConst.FRAGMENT_SHADER);
+
+	var program = new VENUS.Program();
+	var programName = FileUtil.getFileMainNameByPath(path);
+
+	vertexShader.setShaderSourceCode(this.getShaderByPath(path + "/" + programName + ".vert"));
+	vertexShader.compile();
+
+	fragShader.setShaderSourceCode(this.getShaderByPath(path + "/" + programName + ".frag"));
+	fragShader.compile();
+
+	program.attachVertexShader(vertexShader);
+	program.attachFragmentShader(fragShader);
+
+	program.link();
+
+	this._programs[path] = program;
+
+	return program;
 };
 
 VENUS.ResourceManager.prototype._initRequestResourceList = function() {
@@ -90,6 +116,7 @@ VENUS.ResourceManager.prototype._initRequestResourceList = function() {
 	this._requestImagesList.push("/images/crate.gif");
 	this._requestImagesList.push("/images/moon.gif");
 	this._requestImagesList.push("/images/ghxp.png");
+	this._requestImagesList.push("/images/spark.png");
 
 	this._requestImagesList.push("/images/skybox/px.jpg");
 	this._requestImagesList.push("/images/skybox/nx.jpg");
@@ -105,6 +132,12 @@ VENUS.ResourceManager.prototype._initRequestResourceList = function() {
 	// define the shaders to load
 	this._requestShadersList.push("/shaders/basic/basic.vert");
 	this._requestShadersList.push("/shaders/basic/basic.frag");
+
+	this._requestShadersList.push("/shaders/particle/particle.vert");
+	this._requestShadersList.push("/shaders/particle/particle.frag");
+	
+	this._requestShadersList.push("/shaders/billboard/billboard.vert");
+	this._requestShadersList.push("/shaders/billboard/billboard.frag");
 };
 
 VENUS.ResourceManager.prototype._loadImages = function(imageRawDatas) {
@@ -141,7 +174,7 @@ VENUS.ResourceManager.prototype._isResourcesLoaded = function() {
 	return false;
 };
 
-VENUS.ResourceManager.prototype._initDefaultShaderProgram = function() {
+/*VENUS.ResourceManager.prototype._initShaderProgram = function() {
 	var webglConst = VENUS.Engine.getWebGLConstants();
 
 	var vertexShader = new VENUS.Shader(webglConst.VERTEX_SHADER);
@@ -161,3 +194,4 @@ VENUS.ResourceManager.prototype._initDefaultShaderProgram = function() {
 	this._defaultShaderProgram.link();
 	this._defaultShaderProgram.bind();
 };
+*/

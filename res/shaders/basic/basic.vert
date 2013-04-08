@@ -1,10 +1,10 @@
-attribute vec3 aVertex;
-attribute vec3 aNormal;
-attribute vec2 aTextureCoord; 
-
 uniform mat4 uModelViewMatrix; 
 uniform mat4 uProjectionMatrix;
 uniform mat4 uNormalMatrix;
+
+attribute vec3 aVertex;
+attribute vec3 aNormal;
+attribute vec2 aTextureCoord; 
 
 varying vec2 vTextureCoord;
 varying vec3 vCubeMapTextureCoord;

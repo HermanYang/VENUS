@@ -27,6 +27,8 @@ VENUS.WebGLConstants.prototype._initialize = function() {
 	this.ELEMENT_ARRAY_BUFFER = gl.ELEMENT_ARRAY_BUFFER;
 
 	this.TRIANGLES = gl.TRIANGLES;
+	this.TRIANGLE_STRIP = gl.TRIANGLE_STRIP;
+	this.POINTS = gl.POINTS;
 
 	// Texture
 	this.TEXTURE_2D = gl.TEXTURE_2D;

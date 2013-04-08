@@ -33,7 +33,7 @@ function initScene() {
 	var nz = resManager.getImageByPath("/images/skybox/nz.jpg");
 
 	// add a model
-	var node = scene.createEntitySceneNode("model");
+	/*var node = scene.createEntitySceneNode("model");
 	var material = node.getSceneObject().getMaterial();
 	node.getSceneObject().setMesh(VENUS.Mesh.createMeshFromModel("/models/objs/macbook.obj"));
 	var texture = new VENUS.Texture();
@@ -41,7 +41,7 @@ function initScene() {
 	texture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image); 
 	material.set2DTexture(texture);
 	scene.getRootSceneNode().addChild(node);
-
+*/
 	// add a sphere
 	var sphereNode = createSphereSceneNode("sphere", 3);
 	sphereNode.translate(20 * Math.random(), new VENUS.Vector3(Math.random(), 0, Math.random()));
@@ -79,6 +79,15 @@ function initScene() {
 	var spotDegree = 10;
 	var spotLightNode = scene.createSpotLightSceneNode(spotLightAmbientColor, spotLightDiffuseColor, spotLightSpecularColor, spotDirection, spotLightPosition, spotDegree );
 	scene.getRootSceneNode().addChild(spotLightNode);*/
+
+	// create particles
+	/*var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/spark.png");
+	var particleNode = scene.createParticleEmmiterSceneNode(image);
+	scene.getRootSceneNode().addChild(particleNode);*/
+
+	var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/ghxp.png");
+	var billboardNode = scene.createBillboardSceneNode(10, 10, image);
+	scene.getRootSceneNode().addChild(billboardNode);
 }
 
 function createCubeScnenNode(name, size) {
@@ -94,9 +103,9 @@ function createCubeScnenNode(name, size) {
 	cubeNode.getSceneObject().setMesh(VENUS.Mesh.createCubeMesh(size));
 
 	var cubeTexture = new VENUS.Texture();
-	image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/ghxp.png");
+	var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/ghxp.png");
 
-	cubeTexture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image); 
+	cubeTexture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image);
 
 	cubeMaterial.set2DTexture(cubeTexture);
 

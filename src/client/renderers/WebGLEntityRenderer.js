@@ -16,8 +16,15 @@ VENUS.WebGLEntityRenderer = function(entity) {
 
 VENUS.WebGLEntityRenderer.prototype = Object.create(VENUS.WebGLRenderer);
 
+VENUS.WebGLEntityRenderer.prototype.render = function(projectionMatrix, viewMatrix, modelMatrix) {
+	var cons = VENUS.Engine.getWebGLConstants();
+
+	this._setupShaderProgram(projectionMatrix, viewMatrix, modelMatrix);
+
+	this._indexBuffer.drawElements(cons.TRIANGLES);
+};
+
 VENUS.WebGLEntityRenderer.prototype._updateBuffers = function() {
-	var gl = this._context;
 	var entity = this._renderableObject;
 	var material = entity.getMaterial();
 	var mesh = entity.getMesh();
@@ -73,46 +80,44 @@ VENUS.WebGLEntityRenderer.prototype._updateBuffers = function() {
  *Do shader program initialization according to the material and other infomations
  */
 VENUS.WebGLEntityRenderer.prototype._setupShaderProgram = function(projectionMatrix, viewMatrix, modelMatrix) {
-
 	var program = this._program;
 	var entity = this._renderableObject;
 	var material = entity.getMaterial();
 	var mesh = entity.getMesh();
 	var shiniess = material.getShininess();
 	var modelViewMatrix = new VENUS.Matrix44(viewMatrix);
+
 	modelViewMatrix.multiply(modelMatrix);
 
 	var normalMatrix = new VENUS.Matrix44(modelViewMatrix);
+
 	normalMatrix.invert();
 	normalMatrix.transpose();
+
+	program.bind();
 
 	this._setupTextures();
 
 	this._setupLights();
 
+	this._setupBuffers();
+
 	program.setUniformMatrix44("uViewMatrix", viewMatrix);
 	program.setUniformMatrix44("uModelViewMatrix", modelViewMatrix);
 	program.setUniformMatrix44("uProjectionMatrix", projectionMatrix);
 	program.setUniformMatrix44("uNormalMatrix", normalMatrix);
-
 	program.setUniformFloat("uMaterialShininess", shiniess);
+
+};
+
+VENUS.WebGLEntityRenderer.prototype._setupBuffers = function() {
+
+	this._updateBuffers();
 
 	this._vertexBuffer.bindDefaultProgramAttribute("aVertex", 0, 0);
 	this._normalBuffer.bindDefaultProgramAttribute("aNormal", 0, 0);
 	this._textureCoordBuffer.bindDefaultProgramAttribute("aTextureCoord", 0, 0);
-};
 
-VENUS.WebGLEntityRenderer.prototype.render = function(projectionMatrix, viewMatrix, modelMatrix) {
-
-	var gl = this._context;
-	var cons = VENUS.Engine.getWebGLConstants();
-	var entity = this._renderableObject;
-
-	this._updateBuffers();
-
-	this._setupShaderProgram(projectionMatrix, viewMatrix, modelMatrix);
-
-	this._indexBuffer.drawElements(cons.TRIANGLES);
 };
 
 VENUS.WebGLEntityRenderer.prototype._setupTextures = function() {

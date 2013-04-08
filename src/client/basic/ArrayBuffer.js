@@ -12,6 +12,11 @@ VENUS.ArrayBuffer = function() {
 	this._dataType = null;
 }
 
+VENUS.ArrayBuffer.drawArrays = function(type, length) {
+	var gl = VENUS.Engine.getInstance().getWebGLConfiguration().getContext();
+	gl.drawArrays(type, 0, length);
+};
+
 VENUS.ArrayBuffer.prototype.bindProgramAttribute = function(program, attributeName, stride, offset) {
 	program.setAttribute(attributeName, this, stride, offset);
 };
@@ -22,7 +27,7 @@ VENUS.ArrayBuffer.prototype.bindDefaultProgramAttribute = function(attributeName
 };
 
 VENUS.ArrayBuffer.prototype.bind = function() {
-	if(this._buffer === null){
+	if (this._buffer === null) {
 		return false;
 	}
 
@@ -110,7 +115,9 @@ VENUS.ArrayBuffer.prototype.drawElements = function(type) {
 	var gl = this._context;
 
 	SharedUtil.assert(this._bufferType == webglConst.ELEMENT_ARRAY_BUFFER, "only ELEMENT_ARRAY_BUFFER can be draw");
+	
 	gl.bindBuffer(this._bufferType, this._buffer);
 	gl.drawElements(type, this._length, webglConst.UNSIGNED_SHORT, 0);
 };
+
 

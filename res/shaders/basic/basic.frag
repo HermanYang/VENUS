@@ -1,11 +1,5 @@
 precision mediump float;
 
-varying vec2 vTextureCoord;
-varying vec3 vCubeMapTextureCoord;
-varying vec4 vVertex;
-varying vec3 vTransformedNormal;
-varying mat4 vModelViewMatrix;
-
 // material attributes
 uniform float uMaterialShininess;
 
@@ -42,6 +36,13 @@ uniform vec3 uSpotLightDirections[MAX_SPOT_LIGHT_AMOUNT];
 uniform vec3 uSpotLightAmbientColors[MAX_POINTL_LIGHT_AMOUNT];
 uniform vec3 uSpotLightDiffuseColors[MAX_SPOT_LIGHT_AMOUNT];
 uniform vec3 uSpotLightSpecularColors[MAX_SPOT_LIGHT_AMOUNT];
+
+varying vec2 vTextureCoord;
+varying vec3 vCubeMapTextureCoord;
+varying vec4 vVertex;
+varying vec3 vTransformedNormal;
+varying mat4 vModelViewMatrix;
+
 
 // Texture mode
 const int TEXTURE_2D = 0;

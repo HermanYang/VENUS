@@ -26,14 +26,14 @@ VENUS.Program.prototype.link = function() {
 	gl.attachShader(this._shaderProgram, this._fragShader);
 
 	gl.linkProgram(this._shaderProgram);
-};
-
-VENUS.Program.prototype.bind = function() {
-	var gl = this._context;
 
 	if (!gl.getProgramParameter(this._shaderProgram, gl.LINK_STATUS)) {
 		alert("Could not initialise shaders");
 	}
+};
+
+VENUS.Program.prototype.bind = function() {
+	var gl = this._context;
 
 	gl.useProgram(this._shaderProgram);
 };

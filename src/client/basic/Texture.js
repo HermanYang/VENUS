@@ -18,8 +18,6 @@ VENUS.Texture.prototype.createTexture = function(type, internalFormat, format, d
 
 	gl.bindTexture(type, this._textureBuffer);
 
-
-
 	switch (type) {
 	case webglConst.TEXTURE_2D:
 		{
@@ -41,6 +39,8 @@ VENUS.Texture.prototype.createTexture = function(type, internalFormat, format, d
 			break;
 		}
 	}
+
+	gl.bindTexture(type, null);
 };
 
 VENUS.Texture.prototype.getIndex = function() {
@@ -66,24 +66,28 @@ VENUS.Texture.prototype.getType = function() {
 
 VENUS.Texture.prototype.setMinFilter = function(minFilterEnum) {
 	SharedUtil.assert(minFilterEnum !== undefined, "setMinFilter need parameters");
-
 	var gl = this._context;
+	gl.bindTexture(this._type, this._textureBuffer);
 	gl.texParameteri(this._type, gl.TEXTURE_MIN_FILTER, minFilterEnum);
+	gl.bindTexture(this._type, null);
 };
 
 VENUS.Texture.prototype.setMagFilter = function(magFilterEnum) {
 	SharedUtil.assert(magFilterEnum !== undefined, "setMagFilter need parameters");
-
 	var gl = this._context;
+	gl.bindTexture(this._type, this._textureBuffer);
 	gl.texParameteri(this._type, gl.TEXTURE_MAG_FILTER, magFilterEnum);
+	gl.bindTexture(this._type, null);
 };
 
 VENUS.Texture.prototype.setWraps = function(wrapInS, wrapInT) {
 	SharedUtil.assert(wrapInS !== undefined && wrapInT !== undefined, "setWraps need parameters");
 
 	var gl = this._context;
+	gl.bindTexture(this._type, this._textureBuffer);
 	gl.texParameteri(this._type, gl.TEXTURE_WRAP_S, wrapInS);
 	gl.texParameteri(this._type, gl.TEXTURE_WRAP_T, wrapInT);
+	gl.bindTexture(this._type, null);
 };
 
 VENUS.Texture.prototype.releaseTexture = function() {

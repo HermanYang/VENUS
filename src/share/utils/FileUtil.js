@@ -16,7 +16,7 @@ FileUtil.getFileMainNameByPath = function(path) {
 	var indexStart = path.lastIndexOf("/") + 1;
 	var indexEnd = path.lastIndexOf(".");
 	if( indexEnd === -1){
-		indexEnd = path.length - 1;
+		indexEnd = path.length;
 	}
 
 	return path.substring(indexStart, indexEnd);
