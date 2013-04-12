@@ -28,7 +28,7 @@ VENUS.WebGLBillboardRenderer.prototype._drawBillboard = function() {
 		var gl = this._context;
 		gl.enable(gl.BLEND);
 		gl.disable(gl.DEPTH_TEST);
-		gl.blendFunc(gl.ONE, gl.DCT_APLHA);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 
 		VENUS.ArrayBuffer.drawArrays(webglConst.TRIANGLES, arrayBufferElementAmount);
 

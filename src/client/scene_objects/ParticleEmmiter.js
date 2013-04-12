@@ -4,12 +4,12 @@ VENUS.ParticleEmmiter = function() {
 	this._direction = new VENUS.Vector3(1, 0, 0);
 	this._particles = [];
 	this._range = 0;
-	this._particleAmount = 100;
+	this._particleAmount = 1000;
 
 	this._needUpadete = true;
 
 	this._texture = null;
-	this._color = new VENUS.Vector4(1.0, 0.0, 0.0, 5.0);
+	this._color = new VENUS.Vector4(0.5, 0.5, 1.0, 1.0);
 };
 
 VENUS.ParticleEmmiter.prototype = Object.create(VENUS.RenderableObject.prototype);
@@ -68,6 +68,7 @@ VENUS.ParticleEmmiter.prototype._updateParticles = function() {
 	}
 };
 
-VENUS.ParticleEmmiter.prototype.isTransparent = function(){
+VENUS.ParticleEmmiter.prototype.isTransparent = function() {
 	return true;
 };
+

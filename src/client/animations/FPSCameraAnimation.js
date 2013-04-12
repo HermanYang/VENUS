@@ -11,7 +11,7 @@ VENUS.FPSCameraAnimation.prototype.animate = function() {
 VENUS.FPSCameraAnimation.prototype._onKeyDown = function(event) {
 	var role = this._role;
 	var rotateDegree = 5;
-	var distance = 0.1;
+	var distance = 1;
 	switch (event.keyCode) {
 	case VENUS.KeyCode.UpArrow:
 		{

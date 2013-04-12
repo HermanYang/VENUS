@@ -29,7 +29,7 @@ VENUS.WebGLEntityRenderer.prototype._drawEntity = function() {
 	if (entity.isTransparent()) {
 		gl.enable(gl.BLEND);
 		gl.disable(gl.DEPTH_TEST);
-		gl.blendFunc(gl.ONE, gl.DST_ALPHA);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 
 		this._indexBuffer.drawElements(cons.TRIANGLES);
 

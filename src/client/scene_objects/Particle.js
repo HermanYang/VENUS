@@ -8,7 +8,7 @@ VENUS.Particle = function() {
 	this._acceleration = 1;
 
 	//the unit is second
-	this._lifeTime = 2;
+	this._lifeTime = 1;
 	this._bornTime = - 1;
 };
 

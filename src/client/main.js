@@ -37,14 +37,14 @@ function initScene() {
 	//}
 
 	//add a model
-	var node = scene.createEntitySceneNode("model");
-	var material = node.getSceneObject().getMaterial();
-	node.getSceneObject().setMesh(VENUS.Mesh.createMeshFromModel("/models/objs/macbook.obj"));
-	var texture = new VENUS.Texture();
-	var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/ghxp.png");
-	texture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image);
-	material.set2DTexture(texture);
-	scene.getRootSceneNode().addChild(node);
+	//var node = scene.createEntitySceneNode("model");
+	//var material = node.getSceneObject().getMaterial();
+	//node.getSceneObject().setMesh(VENUS.Mesh.createMeshFromModel("/models/objs/macbook.obj"));
+	//var texture = new VENUS.Texture();
+	//var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/ghxp.png");
+	//texture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image);
+	//material.set2DTexture(texture);
+	//scene.getRootSceneNode().addChild(node);
 
 	/*for (var i = 0; i < 400; ++i) {
 		//add a sphere
@@ -55,13 +55,13 @@ function initScene() {
 
 	// add lights
 	// direction light
-	var directionLightAmbientColor = new VENUS.Vector3(0.0, 0.0, 0.0);
-	var directionLightDiffuseColor = new VENUS.Vector3(1.0, 1.0, 1.0);
-	var directionLightSpecularColor = new VENUS.Vector3(1.0, 0.0, 0.0);
+	//var directionLightAmbientColor = new VENUS.Vector3(0.0, 0.0, 0.0);
+	//var directionLightDiffuseColor = new VENUS.Vector3(1.0, 1.0, 1.0);
+	//var directionLightSpecularColor = new VENUS.Vector3(1.0, 0.0, 0.0);
 
-	var direction = new VENUS.Vector3(0, 0, -1);
-	var directionLightNode = scene.createDirectionLightSceneNode(directionLightAmbientColor, directionLightDiffuseColor, directionLightSpecularColor, direction);
-	scene.getRootSceneNode().addChild(directionLightNode);
+	//var direction = new VENUS.Vector3(0, 0, -1);
+	//var directionLightNode = scene.createDirectionLightSceneNode(directionLightAmbientColor, directionLightDiffuseColor, directionLightSpecularColor, direction);
+	//scene.getRootSceneNode().addChild(directionLightNode);
 
 	// point lights
 	var pointLightAmbientColor = new VENUS.Vector3(0.5, 0.5, 0.5);
@@ -73,29 +73,32 @@ function initScene() {
 	scene.getRootSceneNode().addChild(pointLightNode);
 	
 	// spot lights
-	var spotLightAmbientColor = new VENUS.Vector3(0.1, 0.1, 0.1);
-	var spotLightDiffuseColor = new VENUS.Vector3(0.0, 1.0, 0.0);
-	var spotLightSpecularColor = new VENUS.Vector3(1.0, 0.0, 0.0);
+	//var spotLightAmbientColor = new VENUS.Vector3(0.1, 0.1, 0.1);
+	//var spotLightDiffuseColor = new VENUS.Vector3(0.0, 1.0, 0.0);
+	//var spotLightSpecularColor = new VENUS.Vector3(1.0, 0.0, 0.0);
 
-	var spotDirection = new VENUS.Vector3(0.0, 0.0, -1);
-	var spotLightPosition = new VENUS.Vector3(0, 0, 200);
-	var spotDegree = 5;
-	var spotLightNode = scene.createSpotLightSceneNode(spotLightAmbientColor, spotLightDiffuseColor, spotLightSpecularColor, spotDirection, spotLightPosition, spotDegree );
-	scene.getRootSceneNode().addChild(spotLightNode);
+	//var spotDirection = new VENUS.Vector3(0.0, 0.0, -1);
+	//var spotLightPosition = new VENUS.Vector3(0, 0, 200);
+	//var spotDegree = 5;
+	//var spotLightNode = scene.createSpotLightSceneNode(spotLightAmbientColor, spotLightDiffuseColor, spotLightSpecularColor, spotDirection, spotLightPosition, spotDegree );
+	//scene.getRootSceneNode().addChild(spotLightNode);
 
 	//create particles
-	//var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/spark.png");
-	//var particleNode = scene.createParticleEmmiterSceneNode(image);
-	//scene.getRootSceneNode().addChild(particleNode);
+	var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/spark.png");
+	var particleNode = scene.createParticleEmmiterSceneNode(image);
+	scene.getRootSceneNode().addChild(particleNode);
 
 	// create billboard
 	//var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/spark.png");
 	//var billboardNode = scene.createBillboardSceneNode(1, 1, image);
+	//var billboard = billboardNode.getSceneObject();
+	//var material = billboard.getMaterial();
+	//material.setTransparent(true);
 	//scene.getRootSceneNode().addChild(billboardNode);
 	
-	//var skyboxNode = scene.createSkyBoxSceneNode("skybox", 2000, px, nx, py, ny, pz, nz);
-	//scene.getRootSceneNode().addChild(skyboxNode);
-	//document.body.webkitRequestPointerLock();
+	var skyboxNode = scene.createSkyBoxSceneNode("skybox", 2000, px, nx, py, ny, pz, nz);
+	scene.getRootSceneNode().addChild(skyboxNode);
+	document.body.webkitRequestPointerLock();
 }
 
 function createCubeScnenNode(name, size) {
@@ -107,7 +110,7 @@ function createCubeScnenNode(name, size) {
 	var cubeNode = scene.createEntitySceneNode(name);
 
 	var cubeMaterial = cubeNode.getSceneObject().getMaterial();
-	//cubeMaterial.setTransparent(true);
+	cubeMaterial.setTransparent(true);
 	cubeMaterial.setAlpha(0.8);
 
 	cubeNode.getSceneObject().setMesh(VENUS.Mesh.createCubeMesh(size));
