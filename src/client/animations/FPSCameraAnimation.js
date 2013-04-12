@@ -1,11 +1,5 @@
 VENUS.FPSCameraAnimation = function() {
 	VENUS.Animation.call(this);
-
-	var engine = VENUS.Engine.getInstance();
-	var x = engine.getCanvasWidth() / 2;
-	var y = engine.getCanvasHeight() / 2;
-
-	this._originalScreenPosition = new VENUS.Vector2(x, y);
 };
 
 VENUS.FPSCameraAnimation.prototype = Object.create(VENUS.Animation.prototype);
@@ -17,6 +11,7 @@ VENUS.FPSCameraAnimation.prototype.animate = function() {
 VENUS.FPSCameraAnimation.prototype._onKeyDown = function(event) {
 	var role = this._role;
 	var rotateDegree = 5;
+	var distance = 0.1;
 	switch (event.keyCode) {
 	case VENUS.KeyCode.UpArrow:
 		{
@@ -32,53 +27,66 @@ VENUS.FPSCameraAnimation.prototype._onKeyDown = function(event) {
 
 	case VENUS.KeyCode.LeftArrow:
 		{
-			role.rotateY(rotateDegree);
+			var rotationMatrix = role.getRotationTransformMatrix();
+			var sceneUpVector = new VENUS.Vector3(0, 1, 0);
+			rotationMatrix.invert();
+			sceneUpVector.applyMatrix(rotationMatrix);
+			role.rotate(rotateDegree, sceneUpVector);
 			break;
 		}
 
 	case VENUS.KeyCode.RightArrow:
 		{
-			role.rotateY( - rotateDegree);
+			var rotationMatrix = role.getRotationTransformMatrix();
+			var sceneUpVector = new VENUS.Vector3(0, 1, 0);
+			rotationMatrix.invert();
+			sceneUpVector.applyMatrix(rotationMatrix);
+			role.rotate( - rotateDegree, sceneUpVector);
+
 			break;
 		}
 
 	case VENUS.KeyCode.W:
 		{
-			role.translate(1, new VENUS.Vector3(0, 0, - 1));
+			role.translate(distance, new VENUS.Vector3(0, 0, - 1));
 			break;
 		}
 
 	case VENUS.KeyCode.S:
 		{
-			role.translate(1, new VENUS.Vector3(0, 0, 1));
+			role.translate(distance, new VENUS.Vector3(0, 0, 1));
 			break;
 		}
 
 	case VENUS.KeyCode.A:
 		{
-			role.translate(1, new VENUS.Vector3( - 1, 0, 0));
+			role.translate(distance, new VENUS.Vector3( - 1, 0, 0));
 			break;
 		}
 
 	case VENUS.KeyCode.D:
 		{
-			role.translate(1, new VENUS.Vector3(1, 0, 0));
+			role.translate(distance, new VENUS.Vector3(1, 0, 0));
 			break;
 		}
 	}
 
+	document.body.webkitRequestPointerLock();
 };
 
 // TODO:
 VENUS.FPSCameraAnimation.prototype._onMouseMove = function(event) {
 	var role = this._role;
-	var delta = new VENUS.Vector2(event.clientX, event.clientY);
-	delta.subtract(this._originalScreenPosition);
+	var rotationMatrix = role.getRotationTransformMatrix();
+	var sceneUpVector = new VENUS.Vector3(0, 1, 0);
 
-	role.rotateY(-delta.getX() / 50);
-	role.rotateX(-delta.getY() / 50);
+	// compute scene up vector
+	rotationMatrix.invert();
+	sceneUpVector.applyMatrix(rotationMatrix);
 
-	this._originalScreenPosition.setValue(event.clientX, event.clientY);
+	role.rotate( - event.webkitMovementX / 50, sceneUpVector);
+	role.rotateX( - event.webkitMovementY / 50);
 
+	document.body.webkitRequestPointerLock();
 };
 

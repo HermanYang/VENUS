@@ -12,7 +12,11 @@ VENUS.Engine = function() {
 	this._webglConst = new VENUS.WebGLConstants(gl);
 	this._userInputHelper = new VENUS.UserInputHelper();
 
-	this.setCanvasSize(800, 600, true);
+	this._isFullScreen = false;
+
+	this.setCanvasSize(document.body.clientWidth, document.body.clientHeight);
+
+	this._initialize();
 };
 
 VENUS.Engine._instance = null;
@@ -29,6 +33,17 @@ VENUS.Engine.getWebGLConstants = function() {
 	return engine._webglConst;
 };
 
+VENUS.Engine.prototype._initialize = function() {
+	document.body.style.cursor = "none";
+	/*document.addEventListener("fullscreenchanged",  ,false);
+	document.addEventListener("pointerlockchange",  ,false);*/
+};
+
+VENUS.Engine.prototype.setFullScreen = function(isFullScreen) {
+	this._isFullScreen = isFullScreen;
+	this.setCanvasSize(document.body.clientWidth, document.body.clientHeight);
+};
+
 VENUS.Engine.prototype.getResourceManager = function() {
 	return this._resManager;
 };
@@ -41,7 +56,7 @@ VENUS.Engine.prototype.getSceneManager = function() {
 	return this._sceneManager;
 };
 
-VENUS.Engine.prototype.getUserInputHelper = function(){
+VENUS.Engine.prototype.getUserInputHelper = function() {
 	return this._userInputHelper;
 };
 
@@ -71,6 +86,10 @@ VENUS.Engine.prototype.setCanvasSize = function(width, height, affactViewPort) {
 	}
 };
 
+VENUS.Engine.prototype.getFrameRate = function() {
+
+};
+
 VENUS.Engine.prototype.run = function() {
 	var context = this;
 	var render = function() {
@@ -79,3 +98,4 @@ VENUS.Engine.prototype.run = function() {
 	};
 	render();
 };
+

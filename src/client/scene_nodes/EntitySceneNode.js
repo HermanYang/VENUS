@@ -25,7 +25,8 @@ VENUS.EntitySceneNode.prototype.setSceneObject = function( obj ){
 	this._sceneObject = obj;
 }
 
-VENUS.EntitySceneNode.prototype.render = function(projectionMatrix, viewMatrix){
-	this._sceneObject.render(projectionMatrix, viewMatrix, this.getModelMatrix());
+VENUS.EntitySceneNode.prototype.render = function(projectionMatrix, cameraPosition, viewMatrix){
+	var modelMatrix = this.getModelMatrix();
+	this._sceneObject.render(projectionMatrix, cameraPosition, viewMatrix,  modelMatrix);
 	this._animate();
 }

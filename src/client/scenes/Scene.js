@@ -17,20 +17,50 @@ VENUS.Scene.prototype.render = function() {
 	var cameraNode = this.getCurrentCameraSceneNode();
 	var viewMatrix = new VENUS.Matrix44(cameraNode.getViewMatrix());
 	var projectionMatrix = cameraNode.getProjectionMatrix();
-	var sceneList = this._root.getDescendants();
+	var cameraPosition = cameraNode.getPosition();
 
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	gl.enable(gl.DEPTH_TEST);
 
-	for (var i in sceneList) {
-		var node = sceneList[i];
-		if (node.isRenderable()) {
-			node.render(projectionMatrix, viewMatrix);
-		}
+	var renderableLists = this._getRenderableSceneObjectList();
+	var transparentSceneObjectList = renderableLists["transparent"];
+	var opaqueSceneObjectList = renderableLists["opaque"];
+
+	for (var i = 0; i < opaqueSceneObjectList.length; ++i) {
+		opaqueSceneObjectList[i].render(projectionMatrix, cameraPosition, viewMatrix);
+	}
+
+	for (var i = 0; i < transparentSceneObjectList.length; ++i) {
+		transparentSceneObjectList[i].render(projectionMatrix, cameraPosition, viewMatrix);
 	}
 
 }
+
+VENUS.Scene.prototype._getRenderableSceneObjectList = function() {
+	var sceneObjectList = this._root.getDescendants();
+	var transparentSceneObjectList = [];
+	var opaqueSceneObjectList = [];
+	var renderableLists = {};
+	var cameraNode = this._currentCameraNode;
+	var lookAtDirection = cameraNode.getLookAtDirection();
+
+	for (var i = 0; i < sceneObjectList.length; ++i) {
+		var node = sceneObjectList[i];
+		if (node.isRenderable()) {
+			if (node.isTransparent()) {
+				transparentSceneObjectList.push(node);
+			}
+			else {
+				opaqueSceneObjectList.push(node);
+			}
+		}
+	}
+
+	renderableLists["transparent"] = transparentSceneObjectList;
+	renderableLists["opaque"] = opaqueSceneObjectList;
+	return renderableLists;
+};
 
 VENUS.Scene.prototype.getCurrentCameraSceneNode = function() {
 	return this._currentCameraNode;
@@ -45,11 +75,11 @@ VENUS.Scene.prototype.setCurrentCameraNode = function(cameraNode) {
 	this._root.addChild(this._currentCameraNode);
 }
 
-VENUS.Scene.prototype.createPerspectiveCameraSceneNode = function(fovyDegree, near, far, name) {
+VENUS.Scene.prototype.createPerspectiveCameraSceneNode = function(fovyDegree, near, far, position, lookAtDirection, upDirection, name) {
 	var engine = VENUS.Engine.getInstance();
 	var aspect = engine.getCanvasWidth() / engine.getCanvasHeight();
 	var camera = new VENUS.PerspectiveCamera(fovyDegree, aspect, near, far);
-	var node = new VENUS.CameraSceneNode(camera);
+	var node = new VENUS.CameraSceneNode(camera, position, lookAtDirection, upDirection);
 
 	if (name !== undefined) {
 		node.setName(name);
@@ -89,7 +119,7 @@ VENUS.Scene.prototype.createSkyBoxSceneNode = function(name, size, imagePX, imag
 	return node;
 };
 
-VENUS.Scene.prototype.createBillboardSceneNode = function(width, height, image){
+VENUS.Scene.prototype.createBillboardSceneNode = function(width, height, image) {
 	var billboard = new VENUS.Billboard(width, height);
 	var webglConst = VENUS.Engine.getWebGLConstants();
 	var material = billboard.getMaterial();
@@ -103,7 +133,7 @@ VENUS.Scene.prototype.createBillboardSceneNode = function(width, height, image){
 	return node;
 };
 
-VENUS.Scene.prototype.createParticleEmmiterSceneNode = function(image){
+VENUS.Scene.prototype.createParticleEmmiterSceneNode = function(image) {
 	var particleEmmiter = new VENUS.ParticleEmmiter();
 	var webglConst = VENUS.Engine.getWebGLConstants();
 	var texture = new VENUS.Texture();
@@ -115,8 +145,8 @@ VENUS.Scene.prototype.createParticleEmmiterSceneNode = function(image){
 	return node;
 };
 
-VENUS.Scene.prototype.createFPSCameraSceneNode = function(fovyDegree, near, far, name) {
-	var node = this.createPerspectiveCameraSceneNode(fovyDegree, near, far, name);
+VENUS.Scene.prototype.createFPSCameraSceneNode = function(fovyDegree, near, far, position, lookAtDirection, upDirection) {
+	var node = this.createPerspectiveCameraSceneNode(fovyDegree, near, far, position, lookAtDirection, upDirection, name);
 	var fpsCameraAnimation = new VENUS.FPSCameraAnimation();
 	node.addAnimation(fpsCameraAnimation);
 

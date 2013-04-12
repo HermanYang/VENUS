@@ -8,3 +8,7 @@ VENUS.RenderableObject.prototype.render = function(modelViewMatrix44) {
 	// each sub class has its own render method.
 }
 
+VENUS.RenderableObject.prototype.isTransparent = function(){
+
+};
+

@@ -8,8 +8,8 @@ VENUS.Texture = function() {
 VENUS.Texture.prototype.createTexture = function(type, internalFormat, format, dataType, dataPositiveX, dataNegativeX, dataPositiveY, dataNegativeY, dataPositiveZ, dataNegativeZ) {
 	var gl = this._context;
 	var webglConst = VENUS.Engine.getWebGLConstants();
-	var texture2DIndex = 0;
-	var textureCubeMapIndex = 1;
+	var texture2DIndex = 1;
+	var textureCubeMapIndex = 2;
 
 	this.releaseTexture();
 

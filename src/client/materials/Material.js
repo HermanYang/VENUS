@@ -11,11 +11,31 @@ VENUS.Material = function() {
 
 	this._2DTexture = null;
 	this._cubeMapTexture = null;
+
+	this._transparent = false;
+	this._alpha = 1.0;
+	this._color = new VENUS.Vector4(1.0, 1.0, 1.0, 1.0);
 };
 
 VENUS.Material.prototype.set2DTexture = function(texture) {
 	SharedUtil.assert(texture !== undefined, "set2DTexture need parameters");
 	this._2DTexture = texture;
+};
+
+VENUS.Material.prototype.setTransparent = function(transparent){
+	this._transparent = transparent;
+};
+
+VENUS.Material.prototype.setAlpha = function(alpha){
+	this._alpha = alpha;
+};
+
+VENUS.Material.prototype.getAlpha = function(){
+	return this._alpha;
+};
+
+VENUS.Material.prototype.isTransparent = function(){
+	return this._transparent;
 };
 
 VENUS.Material.prototype.setCubeMapTexture = function(texture) {
@@ -29,8 +49,17 @@ VENUS.Material.prototype.setColors = function(colors) {
 	this.colorsChanged = true;
 };
 
+
+VENUS.Material.prototype.setColor = function(color){
+	this._color = color;
+};
+
 VENUS.Material.prototype.getColors = function() {
 	return this._colors;
+};
+
+VENUS.Material.prototype.getColor = function() {
+	return this._color;
 };
 
 VENUS.Material.prototype.get2DTexture = function() {

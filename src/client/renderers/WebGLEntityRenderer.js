@@ -16,12 +16,30 @@ VENUS.WebGLEntityRenderer = function(entity) {
 
 VENUS.WebGLEntityRenderer.prototype = Object.create(VENUS.WebGLRenderer);
 
-VENUS.WebGLEntityRenderer.prototype.render = function(projectionMatrix, viewMatrix, modelMatrix) {
+VENUS.WebGLEntityRenderer.prototype.render = function(projectionMatrix, cameraPosition, viewMatrix, modelMatrix) {
+	this._setupShaderProgram(projectionMatrix, cameraPosition, viewMatrix, modelMatrix);
+	this._drawEntity();
+};
+
+VENUS.WebGLEntityRenderer.prototype._drawEntity = function() {
 	var cons = VENUS.Engine.getWebGLConstants();
+	var entity = this._renderableObject;
+	var gl = this._context;
 
-	this._setupShaderProgram(projectionMatrix, viewMatrix, modelMatrix);
+	if (entity.isTransparent()) {
+		gl.enable(gl.BLEND);
+		gl.disable(gl.DEPTH_TEST);
+		gl.blendFunc(gl.ONE, gl.DST_ALPHA);
 
-	this._indexBuffer.drawElements(cons.TRIANGLES);
+		this._indexBuffer.drawElements(cons.TRIANGLES);
+
+		gl.disable(gl.BLEND);
+		gl.enable(gl.DEPTH_TEST);
+	}
+	else {
+		this._indexBuffer.drawElements(cons.TRIANGLES);
+	}
+
 };
 
 VENUS.WebGLEntityRenderer.prototype._updateBuffers = function() {
@@ -79,18 +97,16 @@ VENUS.WebGLEntityRenderer.prototype._updateBuffers = function() {
 /*
  *Do shader program initialization according to the material and other infomations
  */
-VENUS.WebGLEntityRenderer.prototype._setupShaderProgram = function(projectionMatrix, viewMatrix, modelMatrix) {
+VENUS.WebGLEntityRenderer.prototype._setupShaderProgram = function(projectionMatrix, cameraPosition, viewMatrix, modelMatrix) {
 	var program = this._program;
 	var entity = this._renderableObject;
 	var material = entity.getMaterial();
 	var mesh = entity.getMesh();
 	var shiniess = material.getShininess();
-	var modelViewMatrix = new VENUS.Matrix44(viewMatrix);
+	var alpha = material.getAlpha();
 
-	modelViewMatrix.multiply(modelMatrix);
-
-	var normalMatrix = new VENUS.Matrix44(modelViewMatrix);
-
+	var normalMatrix = new VENUS.Matrix44(modelMatrix);
+	
 	normalMatrix.invert();
 	normalMatrix.transpose();
 
@@ -103,10 +119,12 @@ VENUS.WebGLEntityRenderer.prototype._setupShaderProgram = function(projectionMat
 	this._setupBuffers();
 
 	program.setUniformMatrix44("uViewMatrix", viewMatrix);
-	program.setUniformMatrix44("uModelViewMatrix", modelViewMatrix);
+	program.setUniformMatrix44("uModelMatrix", modelMatrix);
 	program.setUniformMatrix44("uProjectionMatrix", projectionMatrix);
 	program.setUniformMatrix44("uNormalMatrix", normalMatrix);
+	program.setUniformVector3("uCameraPositionInWorld", cameraPosition); 
 	program.setUniformFloat("uMaterialShininess", shiniess);
+	program.setUniformFloat("uAlpha", alpha);
 
 };
 

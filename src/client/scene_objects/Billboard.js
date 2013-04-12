@@ -6,7 +6,7 @@ VENUS.Billboard = function(width, height) {
 	this._width = width;
 	this._height = height;
 
-	this._offsetDirections = this._createDirections();
+	this._offsetDirections = this._createOffsetDirections();
 	this._textureCoords = [new VENUS.Vector2(0, 1), new VENUS.Vector2(0, 0), new VENUS.Vector2(1, 1), new VENUS.Vector2(1, 0), new VENUS.Vector2(0, 0), new VENUS.Vector2(1, 1)];
 
 	this._render = new VENUS.WebGLBillboardRenderer(this);
@@ -17,12 +17,12 @@ VENUS.Billboard.prototype = Object.create(VENUS.RenderableObject.prototype);
 
 VENUS.Billboard.prototype.render = function(projectionMatrix, viewMatrix, position) {
 	if (this._offsetDirectionsNeedUpdated) {
-		this._offsetDirections = this._createDirections();
+		this._offsetDirections = this._createOffsetDirections();
 	}
 	this._render.render(projectionMatrix, viewMatrix, position);
 };
 
-VENUS.Billboard.prototype._createDirections = function() {
+VENUS.Billboard.prototype._createOffsetDirections = function() {
 	var x = this._width;
 	var y = this._height;
 	var offsetDirections = [new VENUS.Vector2( - x, y), new VENUS.Vector2( - x, - y), new VENUS.Vector2(x, y), new VENUS.Vector2(x, - y), new VENUS.Vector2( - x, - y), new VENUS.Vector2(x, y)];
@@ -62,4 +62,8 @@ VENUS.Billboard.prototype.getHeight = function() {
 VENUS.Billboard.prototype.getWidth = function() {
 	return this._width;
 };
+
+VENUS.Billboard.prototype.isTransparent = function(){
+ return this._material.isTransparent();
+}
 

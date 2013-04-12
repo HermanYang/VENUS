@@ -7,7 +7,8 @@ VENUS.ParticleEmmiterSceneNode = function(particleEmmiter){
 
 VENUS.ParticleEmmiterSceneNode.prototype = Object.create(VENUS.MovableSceneNode.prototype);
 
-VENUS.ParticleEmmiterSceneNode.prototype.render = function(){
-	this._sceneObject.render();
+VENUS.ParticleEmmiterSceneNode.prototype.render = function(projectionMatrix, cameraPosition, viewMatrix){
+	var position = this.getPosition();
+	this._sceneObject.render(projectionMatrix, viewMatrix, position);
 };
 

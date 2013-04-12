@@ -1,11 +1,15 @@
-VENUS.CameraSceneNode = function(camera) {
-	if(camera !== undefined){
-		SharedUtil.assert(camera instanceof VENUS.Camera , "CameraSceneNode can just attach with camera");
-	}	
+VENUS.CameraSceneNode = function(camera, position, lookAtDirection, upDirection) {
+	if (camera !== undefined) {
+		SharedUtil.assert(camera instanceof VENUS.Camera, "CameraSceneNode can just attach with camera");
+	}
 
 	VENUS.MovableSceneNode.call(this, camera);
 
-	this._relativeTransformMatrix = VENUS.Matrix44.createLookAtMatrix(new VENUS.Vector3(0, 0, 0), new VENUS.Vector3(0, 0, -1), new VENUS.Vector3(0, 1, 0));
+	this._position = position;
+	this._lookAtDirection = lookAtDirection;
+	this._upDirection = upDirection;
+
+	this._relativeTransformMatrix = VENUS.Matrix44.createLookAtMatrix(position, lookAtDirection, upDirection);
 };
 
 VENUS.CameraSceneNode.prototype = Object.create(VENUS.MovableSceneNode.prototype);
@@ -18,5 +22,10 @@ VENUS.CameraSceneNode.prototype.getViewMatrix = function() {
 
 VENUS.CameraSceneNode.prototype.getProjectionMatrix = function() {
 	return this._sceneObject.getProjectionMatrix();
+};
+
+VENUS.CameraSceneNode.prototype.getLookAtDirection = function() {
+	var lookAtDirection = this._lookAtDirection.clone();
+	lookAtDirection.applyMatrix(this._relativeRotationMatrix);
 };
 

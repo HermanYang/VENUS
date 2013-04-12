@@ -1,10 +1,39 @@
 VENUS.Particle = function() {
-	this._position = new VENUS.Vector3(0, 0, 0);
-	this._speed = 0.001;
-	this._direction = new VENUS.Vector3(0, 1, 1);
+	this._size = 5;
+	VENUS.Billboard.call(this, this._size, this._size);
+
+	this._direction = new VENUS.Vector3(0, 0, - 1);
+
+	this._speed = 0.01;
 	this._acceleration = 1;
-	this._lifeTime = 1000;
+
+	//the unit is second
+	this._lifeTime = 2;
 	this._bornTime = - 1;
+};
+
+VENUS.Particle.prototype = Object.create(VENUS.Billboard.prototype);
+
+VENUS.Particle.prototype.render = function(projectionMatrix, viewMatrix, position) {
+	if (this._offsetDirectionsNeedUpdated) {
+		this._offsetDirections = this._createOffsetDirections();
+	}
+	// compute center position
+	var direction = this._direction.clone();
+	var speed = this._speed;
+	var elapse = this.getElapse();
+	var shrinkage = 1.0 - (elapse / this._lifeTime); 
+	var alpha = shrinkage;
+	var material = this._material;
+	
+	var size =  shrinkage * this._size;
+
+	this.setSize(size);
+	material.setAlpha(alpha);
+	position.add(direction.scale(speed * elapse));
+
+	// render
+	this._render.render(projectionMatrix, viewMatrix, position);
 };
 
 VENUS.Particle.prototype.setSpeed = function(speed) {
@@ -27,6 +56,23 @@ VENUS.Particle.prototype.setBornTime = function(bornTime) {
 	this._bornTime = bornTime;
 };
 
+VENUS.Particle.prototype.setTexture = function(texture) {
+	var material = this._material;
+	material.set2DTexture(texture);
+	material.setTransparent(true);
+};
+
+VENUS.Particle.prototype.setColor = function(color){
+	var material = this._material;
+	material.setColor(color);
+};
+
+VENUS.Particle.prototype.setSize = function(size){
+	this._size = size;
+	this.setWidth(size);
+	this.setHeight(size);
+};
+
 VENUS.Particle.prototype.getDirection = function() {
 	return this._direction;
 };
@@ -44,8 +90,8 @@ VENUS.Particle.prototype.getBornTime = function() {
 };
 
 VENUS.Particle.prototype.isAlive = function() {
-	var elapse = this.getElapse();
-	if (elapse > this._lifeTime) {
+	var elapseSeconds = this.getElapse();
+	if (elapseSeconds > this._lifeTime) {
 		return false;
 	}
 
@@ -55,6 +101,7 @@ VENUS.Particle.prototype.isAlive = function() {
 VENUS.Particle.prototype.getElapse = function() {
 	var date = new Date();
 	var elapse = date.getTime() - this._bornTime;
-	return elapse;
+	var elapseSeconds = elapse / 1000;
+	return elapseSeconds;
 };
 

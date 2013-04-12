@@ -6,15 +6,38 @@ VENUS.WebGLBillboardRenderer = function(billboard) {
 
 	this._offsetDirectionBuffer = new VENUS.ArrayBuffer();
 	this._textureCoordBuffer = new VENUS.ArrayBuffer();
+
 };
 
 VENUS.WebGLBillboardRenderer.prototype = Object.create(VENUS.WebGLRenderer);
 
 VENUS.WebGLBillboardRenderer.prototype.render = function(projectionMatrix, viewMatrix, position) {
-	var webglConst = VENUS.Engine.getWebGLConstants();
-	this._setupShaderProgram(projectionMatrix, viewMatrix, position);
 
-	VENUS.ArrayBuffer.drawArrays(webglConst.TRIANGLES, 6);
+	this._setupShaderProgram(projectionMatrix, viewMatrix, position);
+	this._drawBillboard();
+
+};
+
+VENUS.WebGLBillboardRenderer.prototype._drawBillboard = function() {
+	var webglConst = VENUS.Engine.getWebGLConstants();
+	var arrayBufferElementAmount = 6;
+	var billboard = this._renderableObject;
+	var material = billboard.getMaterial();
+
+	if (material.isTransparent()) {
+		var gl = this._context;
+		gl.enable(gl.BLEND);
+		gl.disable(gl.DEPTH_TEST);
+		gl.blendFunc(gl.ONE, gl.DCT_APLHA);
+
+		VENUS.ArrayBuffer.drawArrays(webglConst.TRIANGLES, arrayBufferElementAmount);
+
+		gl.disable(gl.BLEND);
+		gl.enable(gl.DEPTH_TEST);
+	}
+	else {
+		VENUS.ArrayBuffer.drawArrays(webglConst.TRIANGLES, arrayBufferElementAmount);
+	}
 };
 
 VENUS.WebGLBillboardRenderer.prototype._updateBuffers = function() {
@@ -37,9 +60,11 @@ VENUS.WebGLBillboardRenderer.prototype._updateBuffers = function() {
 VENUS.WebGLBillboardRenderer.prototype._setupTextures = function() {
 	var program = this._program;
 	var billboard = this._renderableObject;
+	var material = billboard.getMaterial();
 	var webglConst = VENUS.Engine.getWebGLConstants();
 
-	var texture = billboard.getMaterial().get2DTexture();
+	var texture = material.get2DTexture();
+
 	program.setTexture("uTexture", texture, webglConst.LINEAR, webglConst.LINEAR, webglConst.CLAMP_TO_EDGE, webglConst.CLAMP_TO_EDGE);
 
 };
@@ -50,19 +75,22 @@ VENUS.WebGLBillboardRenderer.prototype._setupShaderProgram = function(projection
 
 	var webglConst = VENUS.Engine.getWebGLConstants();
 	var billboard = this._renderableObject;
+	var material = billboard.getMaterial();
 	var width = billboard.getWidth();
 	var height = billboard.getHeight();
-
+	var alpha = material.getAlpha();
+	var color = material.getColor();
 	this._setupBuffers();
 
 	this._setupTextures();
 
-	program.setUniformVector3("uPosition", new VENUS.Vector3(0, 0, 0));
-	program.setUniformFloat("uWidth", width);
-	program.setUniformFloat("uHeight", height);
+	program.setUniformVector3("uPosition", position);
+	program.setUniformVector4("uColor", color);
 	program.setUniformMatrix44("uProjectionMatrix", projectionMatrix);
 	program.setUniformMatrix44("uViewMatrix", viewMatrix);
-
+	program.setUniformFloat("uWidth", width);
+	program.setUniformFloat("uHeight", height);
+	program.setUniformFloat("uAlpha", alpha);
 };
 
 VENUS.WebGLBillboardRenderer.prototype._setupBuffers = function() {

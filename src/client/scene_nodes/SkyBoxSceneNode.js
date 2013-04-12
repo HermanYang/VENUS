@@ -25,11 +25,14 @@ VENUS.SkyBoxSceneNode.prototype.setSceneObject = function( obj ){
 	this._sceneObject = obj;
 }
 
-VENUS.SkyBoxSceneNode.prototype.render = function(projectionMatrix, viewMatrix){
+VENUS.SkyBoxSceneNode.prototype.render = function(projectionMatrix, cameraPosition, viewMatrix){
 	var sceneManager = VENUS.Engine.getInstance().getSceneManager();
+	var modelMatrix = this.getModelMatrix();
 	var position = sceneManager.getCurrentScene().getCurrentCameraSceneNode().getPosition();
+	// adjust skybox position according to camera position
 	this.setPosition(position);
+	
+	this._sceneObject.render(projectionMatrix, cameraPosition, viewMatrix, modelMatrix);
 
-	this._sceneObject.render(projectionMatrix, viewMatrix, this.getModelMatrix());
 	this._animate();
 }

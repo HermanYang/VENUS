@@ -6,24 +6,23 @@ VENUS.MovableSceneNode = function(object) {
 	this._position = new VENUS.Vector3(0, 0, 0);
 
 	this._animationList = [];
-}
+};
 
 VENUS.MovableSceneNode.prototype = Object.create(VENUS.SceneNode.prototype);
 
 VENUS.MovableSceneNode.prototype.setPosition = function(posVector3) {
+	// make a copy of position
+	var position = this._position.clone();
 
 	// do tanslation
-	var dis = this._position.distance(posVector3);
-	var dir = posVector3.subtract(this._position);
+	var dis = position.distance(posVector3);
+	var dir = posVector3.subtract(position);
+
 	this.translate(dis, dir);
-
-	// update position
-	this._position.clone(posVector3);
-
-}
+};
 
 VENUS.MovableSceneNode.prototype.getPosition = function() {
-	return this._position;
+	return this._position.clone();
 };
 
 /*
@@ -35,10 +34,12 @@ VENUS.MovableSceneNode.prototype.translate = function(distance, dirVector3) {
 	var tranVec3 = dirVector3.scale(distance);
 	this._relativeTransformMatrix.translate(tranVec3);
 
+	// adjust the translation direction vector affected by rotation
+	tranVec3.applyMatrix(this._relativeRotationMatrix);
+
 	// update position
-	dirVector3.scale(distance);
-	this._position.add(dirVector3);
-}
+	this._position.add(tranVec3);
+};
 
 VENUS.MovableSceneNode.prototype.rotate = function(degree, axisVector3) {
 	// do rotation
@@ -47,7 +48,7 @@ VENUS.MovableSceneNode.prototype.rotate = function(degree, axisVector3) {
 
 	// update relativeRotationMatrix
 	this._relativeRotationMatrix.rotate(rad, axisVector3);
-}
+};
 
 VENUS.MovableSceneNode.prototype.rotateX = function(degree) {
 	// do rotation
@@ -56,7 +57,7 @@ VENUS.MovableSceneNode.prototype.rotateX = function(degree) {
 
 	// update relativeRotationMatrix
 	this._relativeRotationMatrix.rotateX(rad);
-}
+};
 
 VENUS.MovableSceneNode.prototype.rotateY = function(degree) {
 	// do rotation
@@ -65,7 +66,7 @@ VENUS.MovableSceneNode.prototype.rotateY = function(degree) {
 
 	// update relativeRotationMatrix
 	this._relativeRotationMatrix.rotateY(rad);
-}
+};
 
 VENUS.MovableSceneNode.prototype.rotateZ = function(degree) {
 	// do rotation
@@ -74,7 +75,7 @@ VENUS.MovableSceneNode.prototype.rotateZ = function(degree) {
 
 	// update relativeRotationMatrix
 	this._relativeRotationMatrix.rotateZ(rad);
-}
+};
 
 // get the finnal transform matrix
 VENUS.MovableSceneNode.prototype.getRotationTransformMatrix = function() {
@@ -84,7 +85,7 @@ VENUS.MovableSceneNode.prototype.getRotationTransformMatrix = function() {
 	}
 
 	return rotationMatrix;
-}
+};
 
 // get the finnal transform matrix includes rotation and translation transform
 VENUS.MovableSceneNode.prototype.getTransformMatrix = function() {
@@ -94,7 +95,7 @@ VENUS.MovableSceneNode.prototype.getTransformMatrix = function() {
 	}
 
 	return transformMatrix;
-}
+};
 
 VENUS.MovableSceneNode.prototype.addAnimation = function(animation) {
 	this._animationList.push(animation);

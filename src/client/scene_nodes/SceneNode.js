@@ -68,3 +68,11 @@ VENUS.SceneNode.prototype.isLight = function(){
 	var isLight = this._sceneObject instanceof VENUS.Light;
 	return isLight;
 }
+
+VENUS.SceneNode.prototype.isTransparent = function(){
+	var isTransparent = false; 
+	if(this.isRenderable){
+		isTransparent = this._sceneObject.isTransparent();
+	}
+	return isTransparent;
+}

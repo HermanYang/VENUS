@@ -106,6 +106,15 @@ VENUS.Program.prototype.setUniformVector3 = function(paramName, vector3) {
 
 };
 
+VENUS.Program.prototype.setUniformVector4 = function(paramName, vector4) {
+	var gl = this._context;
+	var address = gl.getUniformLocation(this._shaderProgram, paramName);
+
+	gl.uniform4f(address, vector4.getX(), vector4.getY(), vector4.getZ(), vector4.getW());
+
+
+};
+
 VENUS.Program.prototype.setUniformVector3Array = function(paramName, vector3Array) {
 	var gl = this._context;
 	var unpackedData = SharedUtil.unpackedVectors(vector3Array, 3);
@@ -114,7 +123,6 @@ VENUS.Program.prototype.setUniformVector3Array = function(paramName, vector3Arra
 	gl.uniform3fv(address, unpackedData);
 };
 
-VENUS.Program.prototype.setUniformVector4 = function(paramName, vector4) {};
 
 VENUS.Program.prototype.setSampler = function(paramName, value) {
 	this.setUniformInt(paramName, value);

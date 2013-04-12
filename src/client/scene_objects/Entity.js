@@ -24,6 +24,10 @@ VENUS.Entity.prototype.getMaterial = function() {
 	return this._material;
 };
 
-VENUS.Entity.prototype.render = function(projectionMatrix, viewMatrix, modelMatrix) {
-	this._renderer.render(projectionMatrix, viewMatrix, modelMatrix);
+VENUS.Entity.prototype.render = function(projectionMatrix, cameraPosition, viewMatrix, modelMatrix) {
+	this._renderer.render(projectionMatrix, cameraPosition,  viewMatrix, modelMatrix);
+}
+
+VENUS.Entity.prototype.isTransparent = function(){
+ return this._material.isTransparent();
 }
