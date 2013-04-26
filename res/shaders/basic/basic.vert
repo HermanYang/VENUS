@@ -6,10 +6,10 @@ uniform vec3 uCameraPositionInWorld;
 
 // material attributes
 uniform float uMaterialShininess;
+uniform bool uEnableLighting;
 
 // Direction lights attributes
 const int MAX_DIRECTION_LIGHT_AMOUNT = 10;
-uniform bool uEnableDirectionLight;
 uniform bool uDirectionLightAvailableList[MAX_DIRECTION_LIGHT_AMOUNT];
 uniform vec3 uDirectionLightDirections[MAX_DIRECTION_LIGHT_AMOUNT];
 uniform vec3 uDirectionLightAmbientColors[MAX_DIRECTION_LIGHT_AMOUNT];
@@ -18,7 +18,6 @@ uniform vec3 uDirectionLightSpecularColors[MAX_DIRECTION_LIGHT_AMOUNT];
 
 // Point lights attributes
 const int MAX_POINTL_LIGHT_AMOUNT = 10;
-uniform bool uEnablePointLight;
 uniform bool uPointLightAvailableList[MAX_POINTL_LIGHT_AMOUNT];
 uniform vec3 uPointLightPositions[MAX_POINTL_LIGHT_AMOUNT];
 uniform vec3 uPointLightAmbientColors[MAX_POINTL_LIGHT_AMOUNT];
@@ -27,7 +26,6 @@ uniform vec3 uPointLightSpecularColors[MAX_POINTL_LIGHT_AMOUNT];
 
 // Spot lights attributes
 const int MAX_SPOT_LIGHT_AMOUNT = 10;
-uniform bool uEnableSpotLight;
 uniform bool uSpotLightAvailableList[MAX_POINTL_LIGHT_AMOUNT];
 uniform float uSpotLightCosCutoffs[MAX_SPOT_LIGHT_AMOUNT];
 uniform vec3 uSpotLightPositions[MAX_SPOT_LIGHT_AMOUNT];
@@ -136,13 +134,17 @@ void main(void) {
 	vec3 specularColor = vec3(0.0, 0.0 ,0.0);
 	vec3 ambientColor = vec3(0.0, 0.0, 0.0);
 
-	applyDirectionLights(transformedNormal, vertex.xyz, uMaterialShininess, ambientColor, diffuseColor, specularColor);
+	if(uEnableLighting){
+		applyDirectionLights(transformedNormal, vertex.xyz, uMaterialShininess, ambientColor, diffuseColor, specularColor);
+		applyPointLights(transformedNormal, vertex.xyz, uMaterialShininess, ambientColor, diffuseColor, specularColor);
+		applySpotLights(transformedNormal, vertex.xyz, uMaterialShininess, ambientColor, diffuseColor, specularColor);
 
-	applyPointLights(transformedNormal, vertex.xyz, uMaterialShininess, ambientColor, diffuseColor, specularColor);
+		vLightColor = ambientColor + diffuseColor + specularColor;
+	}
+	else{
+		vLightColor = vec3(1.0, 1.0, 1.0 );
+	}
 
-	applySpotLights(transformedNormal, vertex.xyz, uMaterialShininess, ambientColor, diffuseColor, specularColor);
-
-	vLightColor = ambientColor + diffuseColor + specularColor;
 	vTextureCoord = aTextureCoord;
 	vCubeMapTextureCoord = normalize(aVertex);
 

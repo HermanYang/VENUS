@@ -118,12 +118,12 @@ VENUS.ResourceManager.prototype._initRequestResourceList = function() {
 	this._requestImagesList.push("/images/ghxp.png");
 	this._requestImagesList.push("/images/spark.png");
 
-	this._requestImagesList.push("/images/skybox/px.jpg");
-	this._requestImagesList.push("/images/skybox/nx.jpg");
-	this._requestImagesList.push("/images/skybox/py.jpg");
-	this._requestImagesList.push("/images/skybox/ny.jpg");
-	this._requestImagesList.push("/images/skybox/pz.jpg");
-	this._requestImagesList.push("/images/skybox/nz.jpg");
+	this._requestImagesList.push("/images/skybox/universe/px.jpg");
+	this._requestImagesList.push("/images/skybox/universe/nx.jpg");
+	this._requestImagesList.push("/images/skybox/universe/py.jpg");
+	this._requestImagesList.push("/images/skybox/universe/ny.jpg");
+	this._requestImagesList.push("/images/skybox/universe/pz.jpg");
+	this._requestImagesList.push("/images/skybox/universe/nz.jpg");
 
 	// define the meshes to load
 	this._requestModelsList.push("/models/objs/ch_t.obj");

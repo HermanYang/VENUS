@@ -104,6 +104,7 @@ VENUS.WebGLEntityRenderer.prototype._setupShaderProgram = function(projectionMat
 	var mesh = entity.getMesh();
 	var shiniess = material.getShininess();
 	var alpha = material.getAlpha();
+	var enableLighting = material.isEnableLighting();
 
 	var normalMatrix = new VENUS.Matrix44(modelMatrix);
 	
@@ -125,6 +126,7 @@ VENUS.WebGLEntityRenderer.prototype._setupShaderProgram = function(projectionMat
 	program.setUniformVector3("uCameraPositionInWorld", cameraPosition); 
 	program.setUniformFloat("uMaterialShininess", shiniess);
 	program.setUniformFloat("uAlpha", alpha);
+	program.setUniformInt("uEnableLighting", enableLighting);
 
 };
 

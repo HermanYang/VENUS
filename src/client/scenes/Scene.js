@@ -106,6 +106,7 @@ VENUS.Scene.prototype.createSkyBoxSceneNode = function(name, size, imagePX, imag
 
 	var cubeMaterial = entity.getMaterial();
 	var cubeTexture = new VENUS.Texture();
+	cubeMaterial.setEnableLighting(false);
 
 	cubeTexture.createTexture(webglConst.TEXTURE_CUBE_MAP, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, imagePX, imageNX, imagePY, imageNY, imagePZ, imageNZ);
 	cubeMaterial.setCubeMapTexture(cubeTexture);

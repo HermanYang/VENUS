@@ -22,20 +22,19 @@ function initScene() {
 	scene.setCurrentCameraNode(cameraNode);
 
 	var resManager = VENUS.Engine.getInstance().getResourceManager();
-	var px = resManager.getImageByPath("/images/skybox/px.jpg");
-	var nx = resManager.getImageByPath("/images/skybox/nx.jpg");
-	var py = resManager.getImageByPath("/images/skybox/py.jpg");
-	var ny = resManager.getImageByPath("/images/skybox/ny.jpg");
-	var pz = resManager.getImageByPath("/images/skybox/pz.jpg");
-	var nz = resManager.getImageByPath("/images/skybox/nz.jpg");
+	var px = resManager.getImageByPath("/images/skybox/universe/px.jpg");
+	var nx = resManager.getImageByPath("/images/skybox/universe/nx.jpg");
+	var py = resManager.getImageByPath("/images/skybox/universe/py.jpg");
+	var ny = resManager.getImageByPath("/images/skybox/universe/ny.jpg");
+	var pz = resManager.getImageByPath("/images/skybox/universe/pz.jpg");
+	var nz = resManager.getImageByPath("/images/skybox/universe/nz.jpg");
 
 	//add a cube 
 	//for(var i = 0; i < 400; ++i){
-		//var cubeNode = createCubeScnenNode("cube", 5);
-		//cubeNode.setPosition(new VENUS.Vector3(100 * VENUS.Math.random(-1, 1), 150 *  VENUS.Math.random(-1, 1), 150 * VENUS.Math.random(-1, 1)));
-		//scene.getRootSceneNode().addChild(cubeNode);
+	//var cubeNode = createCubeScnenNode("cube", 5);
+	//cubeNode.setPosition(new VENUS.Vector3(100 * VENUS.Math.random(-1, 1), 150 *  VENUS.Math.random(-1, 1), 150 * VENUS.Math.random(-1, 1)));
+	//scene.getRootSceneNode().addChild(cubeNode);
 	//}
-
 	//add a model
 	//var node = scene.createEntitySceneNode("model");
 	//var material = node.getSceneObject().getMaterial();
@@ -45,7 +44,6 @@ function initScene() {
 	//texture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image);
 	//material.set2DTexture(texture);
 	//scene.getRootSceneNode().addChild(node);
-
 	/*for (var i = 0; i < 400; ++i) {
 		//add a sphere
 		var sphereNode = createSphereSceneNode("sphere", 10);
@@ -58,31 +56,27 @@ function initScene() {
 	//var directionLightAmbientColor = new VENUS.Vector3(0.0, 0.0, 0.0);
 	//var directionLightDiffuseColor = new VENUS.Vector3(1.0, 1.0, 1.0);
 	//var directionLightSpecularColor = new VENUS.Vector3(1.0, 0.0, 0.0);
-
 	//var direction = new VENUS.Vector3(0, 0, -1);
 	//var directionLightNode = scene.createDirectionLightSceneNode(directionLightAmbientColor, directionLightDiffuseColor, directionLightSpecularColor, direction);
 	//scene.getRootSceneNode().addChild(directionLightNode);
-
 	// point lights
 	var pointLightAmbientColor = new VENUS.Vector3(0.5, 0.5, 0.5);
 	var pointLightDiffuseColor = new VENUS.Vector3(1.0, 1.0, 1.0);
 	var pointLightSpecularColor = new VENUS.Vector3(1.0, 1.0, 1.0);
 
-	var position = new VENUS.Vector3(0, -5, 2);
+	var position = new VENUS.Vector3(0, 1000, 100);
 	var pointLightNode = scene.createPointLightSceneNode(pointLightAmbientColor, pointLightDiffuseColor, pointLightSpecularColor, position);
 	scene.getRootSceneNode().addChild(pointLightNode);
-	
+
 	// spot lights
 	//var spotLightAmbientColor = new VENUS.Vector3(0.1, 0.1, 0.1);
 	//var spotLightDiffuseColor = new VENUS.Vector3(0.0, 1.0, 0.0);
 	//var spotLightSpecularColor = new VENUS.Vector3(1.0, 0.0, 0.0);
-
 	//var spotDirection = new VENUS.Vector3(0.0, 0.0, -1);
 	//var spotLightPosition = new VENUS.Vector3(0, 0, 200);
 	//var spotDegree = 5;
 	//var spotLightNode = scene.createSpotLightSceneNode(spotLightAmbientColor, spotLightDiffuseColor, spotLightSpecularColor, spotDirection, spotLightPosition, spotDegree );
 	//scene.getRootSceneNode().addChild(spotLightNode);
-
 	//create particles
 	var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/spark.png");
 	var particleNode = scene.createParticleEmmiterSceneNode(image);
@@ -95,7 +89,6 @@ function initScene() {
 	//var material = billboard.getMaterial();
 	//material.setTransparent(true);
 	//scene.getRootSceneNode().addChild(billboardNode);
-	
 	var skyboxNode = scene.createSkyBoxSceneNode("skybox", 2000, px, nx, py, ny, pz, nz);
 	scene.getRootSceneNode().addChild(skyboxNode);
 	document.body.webkitRequestPointerLock();
