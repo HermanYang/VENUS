@@ -38,6 +38,10 @@ VENUS.ParticleEmmiter.prototype.setTexture = function(texture) {
 	this._texture = texture;
 };
 
+VENUS.ParticleEmmiter.prototype.addAffector = function(affector){
+	this._affectors.push(affector);
+};
+
 VENUS.ParticleEmmiter.prototype.getTexture = function() {
 	return this._texture;
 };
@@ -62,6 +66,12 @@ VENUS.ParticleEmmiter.prototype.render = function(projectionMatrix, viewMatrix, 
 
 	for (var i = 0; i < this._particles.length; ++i) {
 		var particle = this._particles[i];
+
+		for(var j = 0; j < this._affectors.length; ++j){
+			var affector = this._affectors[j];
+			particle.applyAffector(affector);
+		}
+
 		particle.render(projectionMatrix, viewMatrix, position.clone());
 	}
 

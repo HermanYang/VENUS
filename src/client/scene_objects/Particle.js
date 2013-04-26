@@ -37,6 +37,10 @@ VENUS.Particle.prototype.render = function(projectionMatrix, viewMatrix, positio
 	this._render.render(projectionMatrix, viewMatrix, position);
 };
 
+VENUS.Particle.prototype.applyAffector = function(affector){
+	affector.affect(this);
+};
+
 VENUS.Particle.prototype.setSpeed = function(speed) {
 	this._speed = speed;
 };
