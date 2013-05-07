@@ -2,10 +2,12 @@ VENUS.Engine = function() {
 	this._canvas = document.createElement("canvas");
 
 	var gl = this._canvas.getContext("experimental-webgl");
+	var canvas2DContext = this._canvas.getContext("2d");
+
 	SharedUtil.assert(gl !== null, "webgl is not supported in this browser!");
 
 	this._resManager = new VENUS.ResourceManager();
-	this._webglRenderer = new VENUS.WebGLConfiguration(gl);
+	this._webglConfiguration = new VENUS.WebGLConfiguration(gl);
 	this._sceneManager = new VENUS.SceneManager();
 
 	this._container = null;
@@ -13,6 +15,7 @@ VENUS.Engine = function() {
 	this._userInputHelper = new VENUS.UserInputHelper();
 
 	this._isFullScreen = false;
+	this._pause = false;
 
 	this.setCanvasSize(document.body.clientWidth, document.body.clientHeight);
 
@@ -34,9 +37,13 @@ VENUS.Engine.getWebGLConstants = function() {
 };
 
 VENUS.Engine.prototype._initialize = function() {
-	document.body.style.cursor = "none";
-	/*document.addEventListener("fullscreenchanged",  ,false);
-	document.addEventListener("pointerlockchange",  ,false);*/
+	var self = this;
+
+	var onWindowSizeChangedDefault = function() {
+		self.setCanvasSize(document.body.clientWidth, document.body.clientHeight);
+	};
+
+	window.addEventListener("resize", onWindowSizeChangedDefault, false);
 };
 
 VENUS.Engine.prototype.setFullScreen = function(isFullScreen) {
@@ -44,12 +51,20 @@ VENUS.Engine.prototype.setFullScreen = function(isFullScreen) {
 	this.setCanvasSize(document.body.clientWidth, document.body.clientHeight);
 };
 
+VENUS.Engine.prototype.addOnPointerLockChangedHandler = function(callback) {
+	document.addEventListener("webkitpointerlockchange", callback, false);
+};
+
+VENUS.Engine.prototype.addOnWindowSizeChangedHandler = function(callback) {
+	window.addEventListener("resize", callback, false);
+};
+
 VENUS.Engine.prototype.getResourceManager = function() {
 	return this._resManager;
 };
 
 VENUS.Engine.prototype.getWebGLConfiguration = function() {
-	return this._webglRenderer;
+	return this._webglConfiguration;
 };
 
 VENUS.Engine.prototype.getSceneManager = function() {
@@ -82,7 +97,7 @@ VENUS.Engine.prototype.setCanvasSize = function(width, height, affactViewPort) {
 	this._canvas.height = height;
 
 	if (affactViewPort === undefined || affactViewPort == true) {
-		this._webglRenderer.setSize(width, height);
+		this._webglConfiguration.setSize(width, height);
 	}
 };
 
@@ -91,11 +106,21 @@ VENUS.Engine.prototype.getFrameRate = function() {
 };
 
 VENUS.Engine.prototype.run = function() {
-	var context = this;
+	var self = this;
 	var render = function() {
 		requestAnimationFrame(render);
-		context._sceneManager.renderScene();
+		if (!self._pause) {
+			self._sceneManager.renderScene();
+		}
 	};
 	render();
+};
+
+VENUS.Engine.prototype.pause = function() {
+	this._pause = true;
+};
+
+VENUS.Engine.prototype.resume = function() {
+	this._pause = false;
 };
 

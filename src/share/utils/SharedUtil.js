@@ -2,6 +2,7 @@ SharedUtil = {};
 
 SharedUtil._currentId = - 1;
 SharedUtil.openAssert = false;
+
 SharedUtil.assert = function(conditon, errMsg) {
 	if (SharedUtil.openAssert) {
 		console.assert(conditon, errMsg);
@@ -27,6 +28,10 @@ SharedUtil.unpackedVectors = function(vectors, dimension) {
 SharedUtil.getUniqueId = function() {
 	SharedUtil._currentId += 1;
 	return SharedUtil._currentId;
+};
+
+SharedUtil.getCurrentTime = function(){
+	return new Date().getTime();
 };
 
 if ("undefined" !== typeof module) {

@@ -150,7 +150,6 @@ VENUS.Scene.prototype.createFPSCameraSceneNode = function(fovyDegree, near, far,
 	var node = this.createPerspectiveCameraSceneNode(fovyDegree, near, far, position, lookAtDirection, upDirection, name);
 	var fpsCameraAnimation = new VENUS.FPSCameraAnimation();
 	node.addAnimation(fpsCameraAnimation);
-
 	return node;
 };
 

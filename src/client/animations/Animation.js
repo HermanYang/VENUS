@@ -1,11 +1,11 @@
 VENUS.Animation = function() {
 	this._role = null;
-	this._duration = - 1;
-	this._startTime = - 1;
-	this._lastTime = -1;
+
 	var engine = VENUS.Engine.getInstance();
 	var userInputHelper = engine.getUserInputHelper();
+
 	var context = this;
+
 	var onKeyDown = function(event) {
 		context._onKeyDown(event);
 	};
@@ -14,23 +14,13 @@ VENUS.Animation = function() {
 		context._onMouseMove(event);
 	};
 
+	var onKeyUp = function(event){
+		context._onKeyUp(event);
+	};
+
 	userInputHelper.addOnKeyDownCallback(onKeyDown);
 	userInputHelper.addOnMouseMoveCallback(onMouseMove);
-};
-
-VENUS.Animation.prototype.setDuration = function(duration) {
-	this._duration = duration;
-};
-
-VENUS.Animation.prototype.start = function() {
-	var date = new Date();
-	this._startTime = date.getTime();
-	this._lastTime = date.getTime();
-};
-
-VENUS.Animation.prototype.stop = function() {
-	this._startTime = - 1;
-	this._lastTime = -1;
+	userInputHelper.addOnKeyUpCallback(onKeyUp);
 };
 
 VENUS.Animation.prototype.animate = function() {
@@ -46,7 +36,12 @@ VENUS.Animation.prototype.animate = function() {
 VENUS.Animation.prototype._onKeyDown = function(event) {
 
 };
+/*
+ *On key up callback
+ */
+VENUS.Animation.prototype._onKeyUp = function(event) {
 
+};
 /*
  *on mouse move callback
  */

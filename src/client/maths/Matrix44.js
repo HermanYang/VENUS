@@ -11,6 +11,7 @@ VENUS.Matrix44.createPerspectiveMatrix = function(fovy, aspect, near, far) {
 	return matrix;
 }
 
+
 VENUS.Matrix44.createOrthoMatrix = function(left, right, bottom, top, near, far) {
 	matrix = new VENUS.Matrix44();
 	mat4.ortho(matrix.getElements(), left, right, bottom, top, near, far);
@@ -82,6 +83,10 @@ VENUS.Matrix44.prototype.rotateZ = function(rad) {
 	mat4.rotateZ(this._elements, this._elements, rad);
 	return this;
 }
+
+VENUS.Matrix44.prototype.clone = function(){
+	return new VENUS.Matrix44(this);
+};
 
 VENUS.Matrix44.prototype.toString = function() {
 	return mat4.str(this._elements);
