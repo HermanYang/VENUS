@@ -33,6 +33,4 @@ VENUS.SkyBoxSceneNode.prototype.render = function(projectionMatrix, cameraPositi
 	this.setPosition(position);
 	
 	this._sceneObject.render(projectionMatrix, cameraPosition, viewMatrix, modelMatrix);
-
-	this._animate();
 }

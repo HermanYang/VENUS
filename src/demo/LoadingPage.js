@@ -61,11 +61,11 @@ LoadingPage.prototype.setProgress = function(progress) {
 	this._currentProgress = progress;
 };
 
-LoadingPage.prototype.setOnStartButtonClickHandler = function(callback){
+LoadingPage.prototype.setOnStartButtonClickHandler = function(callback) {
 	this._divButton.addEventListener("click", callback, false);
 };
 
-LoadingPage.prototype.getContainer = function(){
+LoadingPage.prototype.getContainer = function() {
 	return this._div;
 };
 
@@ -121,6 +121,4 @@ LoadingPage.prototype.finishLoading = function() {
 	50);
 
 };
-
-
 

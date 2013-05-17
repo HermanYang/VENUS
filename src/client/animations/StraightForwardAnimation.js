@@ -4,11 +4,13 @@ VENUS.StraightForwardAnimation = function() {
 	this._direction = new VENUS.Vector3(0, 0, 1);
 	this._speed = 0;
 
-	this._startTime = -1;
-	this._lastTime = -1;
-	this._duration = -1;
+	this._startTime = - 1;
+	this._lastTime = - 1;
+	this._duration = - 1;
 
 	this._acceleration = 0;
+
+	this._maxSpeed = 1;
 };
 
 VENUS.StraightForwardAnimation.prototype = Object.create(VENUS.Animation.prototype);
@@ -17,7 +19,7 @@ VENUS.StraightForwardAnimation.prototype.setDirection = function(direction) {
 	this._direction = direction;
 };
 
-VENUS.StraightForwardAnimation.prototype.setDuration = function(duration){
+VENUS.StraightForwardAnimation.prototype.setDuration = function(duration) {
 	this._duration = duration;
 };
 
@@ -25,6 +27,9 @@ VENUS.StraightForwardAnimation.prototype.setSpeed = function(speed) {
 	this._speed = speed;
 };
 
+VENUS.StraightForwardAnimation.prototype.setMaxSpeed = function(maxSpeed) {
+	this._maxSpeed = maxSpeed;
+};
 VENUS.StraightForwardAnimation.prototype.setAcceleration = function(acceleration) {
 	this._acceleration = acceleration;
 };
@@ -32,11 +37,11 @@ VENUS.StraightForwardAnimation.prototype.setAcceleration = function(acceleration
 VENUS.StraightForwardAnimation.prototype.animate = function() {
 	var role = this._role;
 
-	if(this._startTime === -1){
+	if (this._startTime === - 1) {
 		this._startTime = SharedUtil.getCurrentTime();
 	}
 
-	if(this._lastTime === -1){
+	if (this._lastTime === - 1) {
 		this._lastTime = SharedUtil.getCurrentTime();
 	}
 
@@ -53,7 +58,10 @@ VENUS.StraightForwardAnimation.prototype.animate = function() {
 
 	role.translate(this._speed * delta, this._direction.clone());
 
-	this._speed += this._acceleration;
+	if (this._speed < this._maxSpeed) {
+		this._speed += this._acceleration;
+	}
+
 	this._lastTime = now;
 };
 

@@ -117,7 +117,7 @@ VENUS.Engine.prototype.run = function() {
 };
 
 VENUS.Engine.prototype.pause = function() {
-	this._pause = true;
+	/*this._pause = true;*/
 };
 
 VENUS.Engine.prototype.resume = function() {

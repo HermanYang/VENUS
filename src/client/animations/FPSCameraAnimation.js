@@ -12,16 +12,16 @@ VENUS.FPSCameraAnimation = function() {
 };
 
 VENUS.FPSCameraAnimation.NONE = 0;
-VENUS.FPSCameraAnimation.MOVING= 1;
-VENUS.FPSCameraAnimation.RETARDING= 2;
+VENUS.FPSCameraAnimation.MOVING = 1;
+VENUS.FPSCameraAnimation.RETARDING = 2;
 
 VENUS.FPSCameraAnimation.prototype = Object.create(VENUS.Animation.prototype);
 
 VENUS.FPSCameraAnimation.prototype.animate = function() {
 	var role = this._role;
-	
-	// restrad speed
-	if (this._forwardState	=== VENUS.FPSCameraAnimation.RETARDING) {
+
+	//restrad speed
+	if (this._forwardState === VENUS.FPSCameraAnimation.RETARDING) {
 		if (this._speedForward > 0) {
 			this._speedForward -= this._obstruction;
 		}
@@ -29,7 +29,7 @@ VENUS.FPSCameraAnimation.prototype.animate = function() {
 			this._speedForward += this._obstruction;
 		}
 
-		if(this._speedForward > -0.01 && this._speedForward< 0.01){
+		if (this._speedForward > - 0.01 && this._speedForward < 0.01) {
 			this._speedForward = 0;
 		}
 	}
@@ -42,7 +42,7 @@ VENUS.FPSCameraAnimation.prototype.animate = function() {
 			this._speedRight += this._obstruction;
 		}
 
-		if(this._speedRight > -0.01 && this._speedRight < 0.01){
+		if (this._speedRight > - 0.01 && this._speedRight < 0.01) {
 			this._speedRight = 0;
 		}
 	}
@@ -92,6 +92,7 @@ VENUS.FPSCameraAnimation.prototype._onKeyDown = function(event) {
 		{
 			this._speedForward += this._speedAcceleration;
 			this._forwardState = VENUS.FPSCameraAnimation.MOVING;
+
 			break;
 		}
 
@@ -99,6 +100,7 @@ VENUS.FPSCameraAnimation.prototype._onKeyDown = function(event) {
 		{
 			this._speedForward -= this._speedAcceleration;
 			this._forwardState = VENUS.FPSCameraAnimation.MOVING;
+
 			break;
 		}
 
@@ -106,6 +108,7 @@ VENUS.FPSCameraAnimation.prototype._onKeyDown = function(event) {
 		{
 			this._speedRight -= this._speedAcceleration;
 			this._rightState = VENUS.FPSCameraAnimation.MOVING;
+
 			break;
 		}
 
@@ -113,6 +116,7 @@ VENUS.FPSCameraAnimation.prototype._onKeyDown = function(event) {
 		{
 			this._speedRight += this._speedAcceleration;
 			this._rightState = VENUS.FPSCameraAnimation.MOVING;
+
 			break;
 		}
 

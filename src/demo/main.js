@@ -92,15 +92,17 @@ function initScene() {
 	var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/metal.jpg");
 	texture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image);
 	material.set2DTexture(texture);
-	modelNode.setRelativePosition(new VENUS.Vector3(0, 0, - 20));
 
 	var straightFowardAnimation = new VENUS.StraightForwardAnimation();
 	straightFowardAnimation.setSpeed(0.01);
-	straightFowardAnimation.setDirection(new VENUS.Vector3(0, 0, 1));
+	straightFowardAnimation.setAcceleration(0.01);
+	straightFowardAnimation.setMaxSpeed(1);
+	straightFowardAnimation.setDirection(new VENUS.Vector3(0, 0, -1));
 
-	modelNode.addAnimation(straightFowardAnimation);
-	scene.getRootSceneNode().addChild(modelNode);
-	/*cameraNode.addChild(modelNode);*/
+	//modelNode.addAnimation(straightFowardAnimation);
+	//scene.getRootSceneNode().addChild(modelNode);
+	modelNode.setPosition(new VENUS.Vector3(0, 0, -10));
+	cameraNode.addChild(modelNode);
 
 	// add moon
 	var moonNode = scene.createEntitySceneNode("moon");
@@ -134,6 +136,7 @@ function initScene() {
 	//var material = billboard.getMaterial();
 	//material.setTransparent(true);
 	//scene.getRootSceneNode().addChild(billboardNode);
+	//
 	var px = resManager.getImageByPath("/images/skybox/universe/px.jpg");
 	var nx = resManager.getImageByPath("/images/skybox/universe/nx.jpg");
 	var py = resManager.getImageByPath("/images/skybox/universe/py.jpg");

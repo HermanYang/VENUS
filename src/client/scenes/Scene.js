@@ -13,6 +13,16 @@ VENUS.Scene.prototype.getSceneNodeByName = function() {}
 VENUS.Scene.prototype.getSceneNodeById = function() {}
 
 VENUS.Scene.prototype.render = function() {
+
+	var sceneObjectList = this._root.getDescendants();
+
+	for (var i = 0; i < sceneObjectList.length; ++i) {
+		var node = sceneObjectList[i];
+		if (node instanceof VENUS.MovableSceneNode) {
+			node.animate();
+		}
+	}
+
 	var gl = VENUS.Engine.getInstance().getWebGLConfiguration().getContext();
 	var cameraNode = this.getCurrentCameraSceneNode();
 	var viewMatrix = new VENUS.Matrix44(cameraNode.getViewMatrix());
@@ -27,12 +37,15 @@ VENUS.Scene.prototype.render = function() {
 	var transparentSceneObjectList = renderableLists["transparent"];
 	var opaqueSceneObjectList = renderableLists["opaque"];
 
+
+
 	for (var i = 0; i < opaqueSceneObjectList.length; ++i) {
 		opaqueSceneObjectList[i].render(projectionMatrix, cameraPosition, viewMatrix);
 	}
 
 	for (var i = 0; i < transparentSceneObjectList.length; ++i) {
 		transparentSceneObjectList[i].render(projectionMatrix, cameraPosition, viewMatrix);
+
 	}
 
 }

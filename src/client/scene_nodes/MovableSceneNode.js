@@ -23,7 +23,7 @@ VENUS.MovableSceneNode.prototype.setPosition = function(posVector3) {
 };
 
 VENUS.MovableSceneNode.prototype.setRelativePosition = function(posVector3) {
-	this._relativePosition = posVector3; 
+	this._relativePosition = posVector3;
 };
 
 VENUS.MovableSceneNode.prototype.getPosition = function() {
@@ -80,18 +80,17 @@ VENUS.MovableSceneNode.prototype.getRotationTransformMatrix = function() {
 
 // get the finnal transform matrix includes rotation and translation transform
 VENUS.MovableSceneNode.prototype.getTransformMatrix = function() {
+
 	var transformMatrix = this._relativeTransformMatrix.clone();
 
 	if (this._parent !== undefined && this._parent != null && this._parent instanceof VENUS.MovableSceneNode) {
 		var parentTransformMatrix = this._parent.getTransformMatrix();
 
 		// apply relative position
-		parentTransformMatrix.translate(this._relativePosition);
+		/*parentTransformMatrix.translate(this._relativePosition);*/
 
 		transformMatrix.multiply(parentTransformMatrix);
 	}
-	
-	this._animate();
 
 	return transformMatrix;
 };
@@ -101,8 +100,9 @@ VENUS.MovableSceneNode.prototype.addAnimation = function(animation) {
 	animation.setAnimationRole(this);
 };
 
-VENUS.MovableSceneNode.prototype._animate = function() {
+VENUS.MovableSceneNode.prototype.animate = function() {
 	for (var i = 0; i < this._animationList.length; ++i) {
 		this._animationList[i].animate();
 	}
 };
+
