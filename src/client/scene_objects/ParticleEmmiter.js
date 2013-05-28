@@ -1,35 +1,37 @@
 VENUS.ParticleEmmiter = function() {
 	VENUS.RenderableObject.call(this);
 
-	this._direction = new VENUS.Vector3(0, 0, 1);
+	this._direction = new VENUS.Vector3(0, 1, 0);
 	this._particles = [];
 	this._range = 15;
 
-	this._maxParticleSize = 2.0;
-	this._minParticleSize = 0.1;
+	this._maxParticleSize = 2;
+	this._minParticleSize = 1;
 
-	this._maxParticleLife = 3.0;
-	this._minParticleLife = 1.0;
+	this._maxParticleLife = 1.0;
+	this._minParticleLife = 0.5;
 
-	this._maxParticleSpeed = 5.0;
-	this._minParticleSpeed = 1.0;
+	this._maxParticleSpeed = 20.0;
+	this._minParticleSpeed = 10.0;
 
 	this._minParticleAcceleration = 0.0;
 	this._maxParticleAcceleration = 1.0;
 
-	this._particleAmount = 500;
+	this._particleAmount = 100;
+
 	this._position = new VENUS.Vector3(0, 0, 0);
-	this._enableRandomColor = true;
+	this._enableRandomColor = false;
 	this._mode = VENUS.ParticleEmmiter.Mode.DIRECTION;
 	this._texture = null;
 	this._color = new VENUS.Vector4(1.0, 1.0, 1.0, 1.0);
 
 	this._affectors = [];
+
 };
 
 VENUS.ParticleEmmiter.Mode = {
-	DIRECTION:0,
-	EXPLOSION:1
+	DIRECTION: 0,
+	EXPLOSION: 1
 };
 
 VENUS.ParticleEmmiter.prototype = Object.create(VENUS.RenderableObject.prototype);
@@ -38,7 +40,7 @@ VENUS.ParticleEmmiter.prototype.setTexture = function(texture) {
 	this._texture = texture;
 };
 
-VENUS.ParticleEmmiter.prototype.addAffector = function(affector){
+VENUS.ParticleEmmiter.prototype.addAffector = function(affector) {
 	this._affectors.push(affector);
 };
 
@@ -67,7 +69,7 @@ VENUS.ParticleEmmiter.prototype.render = function(projectionMatrix, viewMatrix, 
 	for (var i = 0; i < this._particles.length; ++i) {
 		var particle = this._particles[i];
 
-		for(var j = 0; j < this._affectors.length; ++j){
+		for (var j = 0; j < this._affectors.length; ++j) {
 			var affector = this._affectors[j];
 			particle.applyAffector(affector);
 		}
@@ -93,18 +95,19 @@ VENUS.ParticleEmmiter.prototype._initParticle = function(particle, time) {
 };
 
 VENUS.ParticleEmmiter.prototype._getParticleColor = function() {
-	if(this._enableRandomColor){
+	if (this._enableRandomColor) {
 		var r = VENUS.Math.random(0, 1);
 		var g = VENUS.Math.random(0, 1);
 		var b = VENUS.Math.random(0, 1);
 		return new VENUS.Vector4(r, g, b, 1.0);
 	}
-	else{
-		return color;
+	else {
+		return this._color;
 	}
 };
 
 VENUS.ParticleEmmiter.prototype._getRandomDirection = function() {
+	var currentDirection = this._direction.clone();
 	switch (this._mode) {
 	case VENUS.ParticleEmmiter.Mode.DIRECTION:
 		{
@@ -113,9 +116,10 @@ VENUS.ParticleEmmiter.prototype._getRandomDirection = function() {
 			var range = this._range;
 			var theta = VENUS.Math.random(0, range);
 
-			var A = this._direction.getX();
-			var B = this._direction.getY();
-			var C = this._direction.getZ();
+			var A = currentDirection.getX();
+			var B = currentDirection.getY();
+			var C = currentDirection.getZ();
+
 			var D = - (A * this._position.getX() + B * this._position.getY() + C * this._position.getZ());
 
 			var length = VENUS.Math.tan(theta);
@@ -131,7 +135,7 @@ VENUS.ParticleEmmiter.prototype._getRandomDirection = function() {
 			} else if (B !== 0) {
 				x = VENUS.Math.random( - 1, 1);
 				z = VENUS.Math.random( - 1, 1);
-				y = - (A * x + C * z) / A;
+				y = - (A * x + C * z) / B;
 
 			} else if (C !== 0) {
 				x = VENUS.Math.random( - 1, 1);
@@ -175,6 +179,15 @@ VENUS.ParticleEmmiter.prototype._updateParticles = function() {
 VENUS.ParticleEmmiter.prototype.setDirection = function(direction) {
 	this._direction = direction;
 	this._direction.normalize();
+	this._forceUpdateParticles();
+};
+
+VENUS.ParticleEmmiter.prototype._forceUpdateParticles = function() {
+	var date = new Date();
+	for (var i = 0; i < this._particles.length; ++i) {
+		var particle = this._particles[i];
+		this._initParticle(particle, date.getTime());
+	}
 };
 
 VENUS.ParticleEmmiter.prototype.setRange = function(range) {
@@ -196,26 +209,27 @@ VENUS.ParticleEmmiter.prototype.setParticleMode = function(mode) {
 	this._mode = mode;
 };
 
-VENUS.ParticleEmmiter.prototype.setParticleSize = function(minSize, maxSize){
+VENUS.ParticleEmmiter.prototype.setParticleSize = function(minSize, maxSize) {
 	this._minParticleSize = minSize;
 	this._maxParticleSize = maxSize;
 };
 
-VENUS.ParticleEmmiter.prototype.setParticleSpeed = function(minSpeed, maxSpeed){
+VENUS.ParticleEmmiter.prototype.setParticleSpeed = function(minSpeed, maxSpeed) {
 	this._minParticleSpeed = minSpeed;
 	this._maxParticleSpeed = maxSpeed;
 };
 
-VENUS.ParticleEmmiter.prototype.setParticleLife = function(minLife, maxLife){
+VENUS.ParticleEmmiter.prototype.setParticleLife = function(minLife, maxLife) {
 	this._minParticleLife = minLife;
 	this._maxParticleLife = maxLife;
 };
 
-VENUS.ParticleEmmiter.prototype.setRandomColor = function(enable){
+VENUS.ParticleEmmiter.prototype.setRandomColor = function(enable) {
 	this._enableRandomColor = enable;
 };
 
-VENUS.ParticleEmmiter.prototype.setParticleAcceleration = function(minAcceleration, maxAcceleration){
+VENUS.ParticleEmmiter.prototype.setParticleAcceleration = function(minAcceleration, maxAcceleration) {
 	this._minParticleAcceleration = minAcceleration;
 	this._maxParticleAcceleration = maxAcceleration;
 };
+

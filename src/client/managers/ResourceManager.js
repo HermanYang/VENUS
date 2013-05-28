@@ -114,15 +114,14 @@ VENUS.ResourceManager.prototype.getProgramByPath = function(path) {
 VENUS.ResourceManager.prototype._initRequestResourceList = function() {
 	// define the images to load
 	this._requestImagesList.push("/images/moon.jpg");
-	this._requestImagesList.push("/images/spark.png");
 	this._requestImagesList.push("/images/metal.jpg");
+	this._requestImagesList.push("/images/mainflare.png");
+	this._requestImagesList.push("/images/particle.bmp");
+	this._requestImagesList.push("/images/particlewhite.bmp");
+	this._requestImagesList.push("/images/stars.png");
+	this._requestImagesList.push("/images/sun.png");
+	this._requestImagesList.push("/images/fire.bmp");
 
-	this._requestImagesList.push("/images/skybox/universe/px.jpg");
-	this._requestImagesList.push("/images/skybox/universe/nx.jpg");
-	this._requestImagesList.push("/images/skybox/universe/py.jpg");
-	this._requestImagesList.push("/images/skybox/universe/ny.jpg");
-	this._requestImagesList.push("/images/skybox/universe/pz.jpg");
-	this._requestImagesList.push("/images/skybox/universe/nz.jpg");
 
 	// define the meshes to load
 	this._requestModelsList.push("/models/objs/cf1.obj");

@@ -15,7 +15,7 @@ function main() {
 function onResourceLoaded() {
 	var engine = VENUS.Engine.getInstance();
 
-	initScene();
+	createUniversityScene();
 
 	var uiManager = UIManager.getInstance();
 	var loadingPage = uiManager.getLoadingPage();
@@ -61,48 +61,100 @@ function onPointerLockChanged() {
 		document.body.appendChild(pausingPage.getContainer());
 		engine.pause();
 	}
-
 };
 
-function initScene() {
+function createComets() {
+	var sceneManager = VENUS.Engine.getInstance().getSceneManager();
+	var resManager = VENUS.Engine.getInstance().getResourceManager();
+
+	var scene = sceneManager.getCurrentScene();
+
+	// add particles
+	var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/sun.png");
+	var particleNode = scene.createParticleEmmiterSceneNode(image);
+	particleNode.setParticleSize(5, 10);
+	particleNode.setParticleSpeed(40, 50);
+	var straightForwardRepeatAnimation = new VENUS.StraightForwardRepeatAnimation();
+	particleNode.addAnimation(straightForwardRepeatAnimation);
+
+	straightForwardRepeatAnimation.setAcceleration(0.01);
+	straightForwardRepeatAnimation.setSpeed(0);
+	scene.getRootSceneNode().addChild(particleNode);
+
+}
+
+function createBattleShips() {
 	var sceneManager = VENUS.Engine.getInstance().getSceneManager();
 	var webglConst = VENUS.Engine.getWebGLConstants();
 	var resManager = VENUS.Engine.getInstance().getResourceManager();
 
-	var scene = sceneManager.createScene("basic");
+	var scene = sceneManager.getCurrentScene();
+	var currentCameraSceneNode = scene.getCurrentCameraSceneNode();
 
-	sceneManager.setCurrentScene(scene);
-
-	//create camera scene node
-	cameraNode = scene.createFPSCameraSceneNode(45, 0.01, 5000, new VENUS.Vector3(0, 0, 0), new VENUS.Vector3(0, 0, - 1), new VENUS.Vector3(0, 1, 0));
-	scene.setCurrentCameraNode(cameraNode);
-
-	// add a cube 
-	for (var i = 0; i < 40; ++i) {
-		var cubeNode = createCubeScnenNode("cube", 5);
-		cubeNode.setPosition(new VENUS.Vector3(100 * VENUS.Math.random( - 1, 1), 150 * VENUS.Math.random( - 1, 1), 150 * VENUS.Math.random( - 1, 1)));
-		scene.getRootSceneNode().addChild(cubeNode);
-	}
-
-	//add a model
-	var modelNode = scene.createEntitySceneNode("model");
-	var material = modelNode.getSceneObject().getMaterial();
-	modelNode.getSceneObject().setMesh(VENUS.Mesh.createMeshFromModel("/models/objs/cf1.obj"));
+	var selfBattleShipSceneNode = scene.createEntitySceneNode("self");
+	var material = selfBattleShipSceneNode.getSceneObject().getMaterial();
+	material.set2DTexture(texture);
+	material.setTransparent(true);
+	material.setColor(new VENUS.Vector4(1, 1, 1, 0.3));
 	var texture = new VENUS.Texture();
 	var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/metal.jpg");
+
+	selfBattleShipSceneNode.getSceneObject().setMesh(VENUS.Mesh.createMeshFromModel("/models/objs/cf1.obj"));
+
 	texture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image);
 	material.set2DTexture(texture);
 
-	var straightFowardAnimation = new VENUS.StraightForwardAnimation();
-	straightFowardAnimation.setSpeed(0.01);
-	straightFowardAnimation.setAcceleration(0.01);
-	straightFowardAnimation.setMaxSpeed(1);
-	straightFowardAnimation.setDirection(new VENUS.Vector3(0, 0, -1));
+	selfBattleShipSceneNode.setPosition(new VENUS.Vector3(0, - 5, - 30));
+	currentCameraSceneNode.addChild(selfBattleShipSceneNode);
 
-	//modelNode.addAnimation(straightFowardAnimation);
-	//scene.getRootSceneNode().addChild(modelNode);
-	modelNode.setPosition(new VENUS.Vector3(0, 0, -10));
-	cameraNode.addChild(modelNode);
+	var battleShipLeaderSceneNode = scene.createEntitySceneNode("leader");
+	material = battleShipLeaderSceneNode.getSceneObject().getMaterial();
+	battleShipLeaderSceneNode.getSceneObject().setMesh(VENUS.Mesh.createMeshFromModel("/models/objs/cf1.obj"));
+	material.set2DTexture(texture);
+	material.setTransparent(true);
+	material.setColor(new VENUS.Vector4(1, 1, 1, 0.5));
+	battleShipLeaderSceneNode.setPosition(new VENUS.Vector3(0, 0, - 200));
+	battleShipLeaderSceneNode.setScale(new VENUS.Vector3(2.0, 2.0, 2.0));
+	scene.getRootSceneNode().addChild(battleShipLeaderSceneNode);
+
+	var battleShipFollowerASceneNode = scene.createEntitySceneNode("followerA");
+	material = battleShipFollowerASceneNode.getSceneObject().getMaterial();
+	battleShipFollowerASceneNode.getSceneObject().setMesh(VENUS.Mesh.createMeshFromModel("/models/objs/cf1.obj"));
+	material.set2DTexture(texture);
+	material.setTransparent(true);
+	material.setColor(new VENUS.Vector4(1, 1, 1, 0.3));
+	battleShipFollowerASceneNode.setPosition(new VENUS.Vector3(40, 0,  40));
+	battleShipLeaderSceneNode.addChild(battleShipFollowerASceneNode);
+
+	var battleShipFollowerBSceneNode= scene.createEntitySceneNode("followerB");
+	material = battleShipFollowerBSceneNode.getSceneObject().getMaterial();
+	battleShipFollowerBSceneNode.getSceneObject().setMesh(VENUS.Mesh.createMeshFromModel("/models/objs/cf1.obj"));
+	material.set2DTexture(texture);
+	material.setTransparent(true);
+	material.setColor(new VENUS.Vector4(1, 1, 1, 0.3));
+	battleShipFollowerBSceneNode.setPosition(new VENUS.Vector3( - 40, 0,  40));
+	battleShipLeaderSceneNode.addChild(battleShipFollowerBSceneNode);
+
+	var centripetalAnimation = new VENUS.CentripetalAnimation();
+	centripetalAnimation.setSpeed(0.01);
+	centripetalAnimation.setAcceleration(0.0001);
+	centripetalAnimation.setMaxSpeed(0.3);
+
+	var goAndReturnAnimation = new VENUS.GoAndReturnAnimation();
+	goAndReturnAnimation.setSpeed(0.01);
+	goAndReturnAnimation.setAcceleration(0.0001);
+	goAndReturnAnimation.setMaxSpeed(0.3);
+
+	battleShipLeaderSceneNode.addAnimation(centripetalAnimation);
+	battleShipLeaderSceneNode.addAnimation(goAndReturnAnimation);
+};
+
+function createPlanets() {
+	var sceneManager = VENUS.Engine.getInstance().getSceneManager();
+	var webglConst = VENUS.Engine.getWebGLConstants();
+	var resManager = VENUS.Engine.getInstance().getResourceManager();
+
+	var scene = sceneManager.getCurrentScene();
 
 	// add moon
 	var moonNode = scene.createEntitySceneNode("moon");
@@ -112,86 +164,75 @@ function initScene() {
 	image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/moon.jpg");
 	texture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image);
 	material.set2DTexture(texture);
+	material.setTransparent(true);
+	material.setColor(new VENUS.Vector4(1, 1, 0, 1));
 	moonNode.setPosition(new VENUS.Vector3(100, 100, 100));
 	scene.getRootSceneNode().addChild(moonNode);
+};
+
+function createSkyBox() {
+	var sceneManager = VENUS.Engine.getInstance().getSceneManager();
+	var resManager = VENUS.Engine.getInstance().getResourceManager();
+
+	var scene = sceneManager.getCurrentScene();
+
+	var stars = resManager.getImageByPath("/images/stars.png");
+	var skyboxNode = scene.createSkyBoxSceneNode("skybox", 50000, stars, stars, stars, stars, stars, stars);
+
+	scene.getRootSceneNode().addChild(skyboxNode);
+};
+
+function createStars() {
+	var sceneManager = VENUS.Engine.getInstance().getSceneManager();
+	var resManager = VENUS.Engine.getInstance().getResourceManager();
+
+	var scene = sceneManager.getCurrentScene();
+
+	// create billboard
+	var keepDistanceFromCameraAnimation = new VENUS.KeepDistanceFromCameraAnimation();
+	var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/sun.png");
+	var billboardNode = scene.createBillboardSceneNode(10000, 10000, image);
+	billboardNode.setPosition(new VENUS.Vector3(0, 0, - 20000));
+	var material = billboardNode.getSceneObject().getMaterial();
+	material.setColor(new VENUS.Vector4(1, 0, 0, 1));
+	billboardNode.addAnimation(keepDistanceFromCameraAnimation);
+	scene.getRootSceneNode().addChild(billboardNode);
+
+};
+
+function createLights() {
+	var sceneManager = VENUS.Engine.getInstance().getSceneManager();
+	var resManager = VENUS.Engine.getInstance().getResourceManager();
+
+	var scene = sceneManager.getCurrentScene();
 
 	// point lights
 	var pointLightAmbientColor = new VENUS.Vector3(0.5, 0.5, 0.5);
 	var pointLightDiffuseColor = new VENUS.Vector3(1.0, 1.0, 1.0);
-	var pointLightSpecularColor = new VENUS.Vector3(1.0, 1.0, 1.0);
+	var pointLightSpecularColor = new VENUS.Vector3(0.5, 0.5, 0.5);
 
-	var position = new VENUS.Vector3(0, 1000, 100);
+	var position = new VENUS.Vector3(0, 1000, 0);
 	var pointLightNode = scene.createPointLightSceneNode(pointLightAmbientColor, pointLightDiffuseColor, pointLightSpecularColor, position);
 	scene.getRootSceneNode().addChild(pointLightNode);
 
-	/*// add particles
-	var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/spark.png");
-	var particleNode = scene.createParticleEmmiterSceneNode(image);
-	scene.getRootSceneNode().addChild(particleNode);*/
-
-	// create billboard
-	//var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/spark.png");
-	//var billboardNode = scene.createBillboardSceneNode(1, 1, image);
-	//var billboard = billboardNode.getSceneObject();
-	//var material = billboard.getMaterial();
-	//material.setTransparent(true);
-	//scene.getRootSceneNode().addChild(billboardNode);
-	//
-	var px = resManager.getImageByPath("/images/skybox/universe/px.jpg");
-	var nx = resManager.getImageByPath("/images/skybox/universe/nx.jpg");
-	var py = resManager.getImageByPath("/images/skybox/universe/py.jpg");
-	var ny = resManager.getImageByPath("/images/skybox/universe/ny.jpg");
-	var pz = resManager.getImageByPath("/images/skybox/universe/pz.jpg");
-	var nz = resManager.getImageByPath("/images/skybox/universe/nz.jpg");
-	var skyboxNode = scene.createSkyBoxSceneNode("skybox", 2000, px, nx, py, ny, pz, nz);
-
-	scene.getRootSceneNode().addChild(skyboxNode);
-	document.body.webkitRequestPointerLock();
-}
-
-function createCubeScnenNode(name, size) {
-	// create entity scenen node and initialize it with cube
-	var sceneManager = VENUS.Engine.getInstance().getSceneManager();
-	var scene = sceneManager.getCurrentScene();
-	var webglConst = VENUS.Engine.getWebGLConstants();
-
-	var cubeNode = scene.createEntitySceneNode(name);
-
-	var cubeMaterial = cubeNode.getSceneObject().getMaterial();
-	cubeMaterial.setTransparent(true);
-	cubeMaterial.setAlpha(0.8);
-
-	cubeNode.getSceneObject().setMesh(VENUS.Mesh.createCubeMesh(size));
-
-	var cubeTexture = new VENUS.Texture();
-	var image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/moon.jpg");
-
-	cubeTexture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image);
-
-	cubeMaterial.set2DTexture(cubeTexture);
-
-	return cubeNode;
-}
-
-function createSphereSceneNode(name, radius) {
-	// create entity scenen node and initialize it with cube
-	var sceneManager = VENUS.Engine.getInstance().getSceneManager();
-	var scene = sceneManager.getCurrentScene();
-	var webglConst = VENUS.Engine.getWebGLConstants();
-
-	var node = scene.createEntitySceneNode(name);
-
-	var material = node.getSceneObject().getMaterial();
-	//material.setTransparent(true);
-	material.setAlpha(0.5);
-	node.getSceneObject().setMesh(VENUS.Mesh.createSphereMesh(radius, 30, 30));
-
-	var texture = new VENUS.Texture();
-	image = VENUS.Engine.getInstance().getResourceManager().getImageByPath("/images/ghxp.png");
-	texture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image);
-
-	material.set2DTexture(texture);
-
-	return node;
 };
+
+function createUniversityScene() {
+	// create Scene
+	var sceneManager = VENUS.Engine.getInstance().getSceneManager();
+	var scene = sceneManager.createScene("basic");
+
+	sceneManager.setCurrentScene(scene);
+
+	//create camera 
+	var cameraNode = scene.createFPSCameraSceneNode(45, 1, 200000, new VENUS.Vector3(0, 0, 0), new VENUS.Vector3(0, 0, - 1), new VENUS.Vector3(0, 1, 0));
+	scene.setCurrentCameraNode(cameraNode);
+
+	createBattleShips();
+	createPlanets();
+	createComets();
+	createSkyBox();
+	createLights();
+	createStars();
+}
 

@@ -141,6 +141,7 @@ VENUS.Scene.prototype.createBillboardSceneNode = function(width, height, image) 
 
 	texture.createTexture(webglConst.TEXTURE_2D, webglConst.RGBA, webglConst.RGBA, webglConst.UNSIGNED_BYTE, image);
 	material.set2DTexture(texture);
+	material.setTransparent(true);
 
 	var node = new VENUS.BillboardSceneNode(billboard);
 

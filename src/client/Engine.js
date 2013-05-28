@@ -20,6 +20,7 @@ VENUS.Engine = function() {
 	this.setCanvasSize(document.body.clientWidth, document.body.clientHeight);
 
 	this._initialize();
+	this._beforeRenderCallBackList = [];
 };
 
 VENUS.Engine._instance = null;
@@ -110,6 +111,9 @@ VENUS.Engine.prototype.run = function() {
 	var render = function() {
 		requestAnimationFrame(render);
 		if (!self._pause) {
+			for(var i = 0; i < self._beforeRenderCallBackList.length; i++){
+				self._beforeRenderCallBackList[i]();
+			}
 			self._sceneManager.renderScene();
 		}
 	};
@@ -117,10 +121,14 @@ VENUS.Engine.prototype.run = function() {
 };
 
 VENUS.Engine.prototype.pause = function() {
-	/*this._pause = true;*/
+	this._pause = true;
 };
 
 VENUS.Engine.prototype.resume = function() {
 	this._pause = false;
+};
+
+VENUS.Engine.prototype.addBeforeRenderCallBack = function(callback){
+	this._beforeRenderCallBackList.push(callback);
 };
 

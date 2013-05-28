@@ -2,7 +2,7 @@ precision mediump float;
 
 // material attributes
 uniform float uAlpha;
-
+uniform vec4 uColor;
 uniform sampler2D u2DTextureSampler;
 uniform samplerCube uCubeTextureSampler;
 
@@ -27,6 +27,8 @@ void main(void) {
 		textureColor = textureCube(uCubeTextureSampler, vCubeMapTextureCoord);
 	}
 
-	gl_FragColor = vec4(textureColor.rgb * vLightColor.rgb, textureColor.a * uAlpha );
+	vec4 fragColor = vec4(textureColor.rgb * vLightColor.rgb, textureColor.a * uAlpha );
+	fragColor = fragColor * uColor;
+	gl_FragColor = fragColor;
 }
 

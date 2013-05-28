@@ -22,12 +22,37 @@ VENUS.MovableSceneNode.prototype.setPosition = function(posVector3) {
 	this.translate(dis, dir);
 };
 
-VENUS.MovableSceneNode.prototype.setRelativePosition = function(posVector3) {
-	this._relativePosition = posVector3;
+VENUS.MovableSceneNode.prototype.setForwardDirection = function(forwardDirection) {
+	var originalDirection = new VENUS.Vector3(0, 0, 1);
+	var cosDegree = originalDirection.dot(forwardDirection.normalize());
+	var degree = VENUS.Math.arccos(cosDegree);
+	var axis = originalDirection.cross(forwardDirection);
+
+	this._relativeTransformMatrix.identity();
+	this._relativeRotationMatrix.identity();
+
+	var targetPosition = this._position.clone();
+	this._position.setValue(0, 0, 0); 
+	this.setPosition(targetPosition);
+	this._relativeTransformMatrix.rotate(degree, axis);
+
 };
+
+VENUS.MovableSceneNode.prototype.getCurentDirection = function(){
+	var originalDirection = new VENUS.Vector3(0, 0, 1);
+	originalDirection.applyMatrix(this._relativeRotationMatrix);
+	return originalDirection;
+}
 
 VENUS.MovableSceneNode.prototype.getPosition = function() {
 	return this._position.clone();
+};
+
+VENUS.MovableSceneNode.prototype.getAbsolutePosition = function(){
+	var absulutePosition = new VENUS.Vector3(0, 0, 0);
+	var transform = this.getTransformMatrix();
+	absulutePosition.applyMatrix(transform);
+	return absulutePosition;
 };
 
 /*
@@ -37,6 +62,7 @@ VENUS.MovableSceneNode.prototype.translate = function(distance, dirVector3) {
 	// do translation
 	dirVector3.normalize();
 	var tranVec3 = dirVector3.scale(distance);
+
 	this._relativeTransformMatrix.translate(tranVec3);
 
 	// adjust the translation direction vector affected by rotation
@@ -44,6 +70,7 @@ VENUS.MovableSceneNode.prototype.translate = function(distance, dirVector3) {
 
 	// update position
 	this._position.add(tranVec3);
+
 };
 
 VENUS.MovableSceneNode.prototype.rotate = function(degree, axisVector3) {
@@ -86,10 +113,9 @@ VENUS.MovableSceneNode.prototype.getTransformMatrix = function() {
 	if (this._parent !== undefined && this._parent != null && this._parent instanceof VENUS.MovableSceneNode) {
 		var parentTransformMatrix = this._parent.getTransformMatrix();
 
-		// apply relative position
-		/*parentTransformMatrix.translate(this._relativePosition);*/
+		parentTransformMatrix.multiply(transformMatrix);
 
-		transformMatrix.multiply(parentTransformMatrix);
+		transformMatrix = parentTransformMatrix;
 	}
 
 	return transformMatrix;

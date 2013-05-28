@@ -69,7 +69,6 @@ VENUS.Vector3.prototype.length = function() {
 
 VENUS.Vector3.prototype.negate = function() {
 	vec3.negate(this._elements, this._elements);
-	return this;
 };
 
 VENUS.Vector3.prototype.normalize = function() {
@@ -78,8 +77,7 @@ VENUS.Vector3.prototype.normalize = function() {
 };
 
 VENUS.Vector3.prototype.dot = function(vector3) {
-	vec3.dot(this._elements, vector3.getElements());
-	return this;
+	return vec3.dot(this._elements, vector3.getElements());
 };
 
 VENUS.Vector3.prototype.cross = function(vector3) {

@@ -27,13 +27,13 @@ VENUS.WebGLBillboardRenderer.prototype._drawBillboard = function() {
 	if (material.isTransparent()) {
 		var gl = this._context;
 		gl.enable(gl.BLEND);
-		gl.disable(gl.DEPTH_TEST);
+		gl.depthMask(false);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 
 		VENUS.ArrayBuffer.drawArrays(webglConst.TRIANGLES, arrayBufferElementAmount);
 
 		gl.disable(gl.BLEND);
-		gl.enable(gl.DEPTH_TEST);
+		gl.depthMask(true);
 	}
 	else {
 		VENUS.ArrayBuffer.drawArrays(webglConst.TRIANGLES, arrayBufferElementAmount);
